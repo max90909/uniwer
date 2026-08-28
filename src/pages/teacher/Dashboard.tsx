@@ -9,11 +9,13 @@ import { ProgressBar } from '../../components/ProgressBar';
 import { BandLegend } from '../../components/BandLegend';
 import { Item, Stagger } from '../../components/Reveal';
 import { pct } from '../../lib/format';
+import { useLabel } from '../../lib/label';
 
 export default function TeacherDashboard() {
   const { data } = useStore();
   const { user } = useSession();
   const { t } = useI18n();
+  const label = useLabel();
   if (!user) return null;
 
   const myGroupIds = data.teacherGroups.filter((tg) => tg.teacherId === user.id).map((tg) => tg.groupId);
@@ -54,7 +56,7 @@ export default function TeacherDashboard() {
         {stats.map((s) => (
           <Item key={s.group.id}>
             <div className="card" style={{ height: '100%' }}>
-              <h3>{s.group.name}</h3>
+              <h3>{label(s.group)}</h3>
               <div style={{ margin: '14px 0 16px' }}>
                 <ProgressBar value={s.average} label={t('teacher.avg')} showValue ticks />
               </div>

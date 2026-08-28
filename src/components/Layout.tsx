@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react';
 import { NavLink, useLocation, useOutlet } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from '../lib/session';
 import { useI18n } from '../i18n';
 import { LANG_LABEL, type Lang } from '../i18n/translations';
 import { PageTransition } from './PageTransition';
+import { MOBILE_QUERY, useMediaQuery } from '../lib/useMediaQuery';
 
 interface NavItem {
   to: string;
@@ -40,17 +42,26 @@ const NAV: Record<'student' | 'teacher' | 'admin', NavItem[]> = {
   ],
 };
 
-export function LanguageSwitcher() {
+/**
+ * `subtle` — приглушённый вариант: переключатель почти не видно, пока на него не
+ * навели. Язык меняют один раз, поэтому в интерфейсе он не должен спорить за
+ * внимание с содержимым.
+ */
+export function LanguageSwitcher({ subtle = false }: { subtle?: boolean }) {
   const { lang, setLang } = useI18n();
   return (
-    <div className="lang-switch" role="group" aria-label="Language">
+    <div className={`lang-switch${subtle ? ' subtle' : ''}`} role="group" aria-label="Language">
       {(Object.keys(LANG_LABEL) as Lang[]).map((l) => (
-        <button key={l} className={`lang-pill${lang === l ? ' active' : ''}`} onClick={() => setLang(l)}>
-          {/* The active pill glides between languages instead of blinking on/off. */}
+        <button
+          key={l}
+          className={`lang-pill${lang === l ? ' active' : ''}`}
+          onClick={() => setLang(l)}
+          aria-pressed={lang === l}
+        >
           {lang === l && (
             <motion.span
               className="lang-pill-bg"
-              layoutId="lang-pill-bg"
+              layoutId={subtle ? 'lang-pill-bg-subtle' : 'lang-pill-bg'}
               transition={{ type: 'spring', stiffness: 420, damping: 34 }}
             />
           )}
@@ -65,70 +76,127 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
   const { user, logout } = useSession();
   const { t } = useI18n();
   const location = useLocation();
-  // `useOutlet()` resolves the matched child to a concrete element. <Outlet/> would
-  // read the router context at render time, so the copy AnimatePresence holds back
-  // for the exit animation would render the *incoming* page — showing the new
-  // content fading out and in at once. Capturing the element pins the old page.
   const outlet = useOutlet();
+
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Переход на другую страницу закрывает шторку — иначе она осталась бы поверх
+  // только что открытой страницы. То же при возврате на широкий экран.
+  useEffect(() => setMenuOpen(false), [location.pathname]);
+  useEffect(() => { if (!isMobile) setMenuOpen(false); }, [isMobile]);
+
+  // Пока шторка открыта, страница под ней не должна прокручиваться.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [menuOpen]);
+
+  // Esc закрывает шторку — привычно для любого оверлея.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+
+  const title = t(NAV[role].find((i) => i.to === location.pathname)?.key ?? NAV[role][0].key);
+
+  const sidebar = (
+    <>
+      <div className="brand">
+        <span className="mark">{t('appName')}</span>
+        <span className="role-tag">{t(`role.${role}`)}</span>
+      </div>
+
+      <div className="nav-list">
+        {NAV[role].map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.to === `/${role}`}
+            className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+          >
+            {({ isActive }) => (
+              <>
+                {isActive && (
+                  <motion.span
+                    className="nav-active-bg"
+                    layoutId="nav-active"
+                    transition={{ type: 'spring', stiffness: 400, damping: 36 }}
+                  />
+                )}
+                <span className="nav-icon" aria-hidden="true">{item.icon}</span>
+                <span className="nav-text">{t(item.key)}</span>
+              </>
+            )}
+          </NavLink>
+        ))}
+      </div>
+
+      <div className="sidebar-footer">
+        <div className="current-user">
+          <span className="avatar" aria-hidden="true">{initials(user?.fullName ?? '')}</span>
+          <span className="current-user-text">
+            <span className="name">{user?.fullName}</span>
+            <span className="email">{user?.email}</span>
+          </span>
+        </div>
+        <button className="btn ghost logout-btn" onClick={logout}>{t('common.signOut')}</button>
+        <div className="sidebar-lang"><LanguageSwitcher subtle /></div>
+      </div>
+    </>
+  );
 
   return (
     <motion.div
       className="app-shell"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
       transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
     >
-      <nav className="app-sidebar">
-        <div className="brand">
-          <span className="mark">{t('appName')}</span>
-        </div>
-        <span className="role-tag" style={{ padding: '0 10px 10px' }}>
-          {t(`role.${role}`)}
-        </span>
-        <div style={{ padding: '0 10px 14px' }}>
-          <LanguageSwitcher />
-        </div>
-
-        <div className="nav-list">
-          {NAV[role].map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === `/${role}`}
-              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-            >
-              {({ isActive }) => (
-                <>
-                  {/* One shared indicator slides down the sidebar between items. */}
-                  {isActive && (
-                    <motion.span
-                      className="nav-active-bg"
-                      layoutId="nav-active-bg"
-                      transition={{ type: 'spring', stiffness: 400, damping: 36 }}
-                    />
-                  )}
-                  <span className="nav-icon" aria-hidden="true">{item.icon}</span>
-                  <span className="nav-text">{t(item.key)}</span>
-                </>
-              )}
-            </NavLink>
-          ))}
-        </div>
-
-        <div className="sidebar-footer">
-          <div className="current-user">
-            <span className="avatar" aria-hidden="true">{initials(user?.fullName ?? '')}</span>
-            <span className="current-user-text">
-              <span className="name">{user?.fullName}</span>
-              <span className="email">{user?.email}</span>
-            </span>
-          </div>
-          <button className="btn ghost" style={{ width: '100%', justifyContent: 'center' }} onClick={logout}>
-            {t('common.changeUser')}
+      {isMobile && (
+        <header className="app-topbar">
+          <button
+            className="burger"
+            onClick={() => setMenuOpen(true)}
+            aria-label={t('common.openMenu')}
+            aria-expanded={menuOpen}
+          >
+            <span /><span /><span />
           </button>
-        </div>
-      </nav>
+          <span className="topbar-title">{title}</span>
+          <LanguageSwitcher subtle />
+        </header>
+      )}
+
+      {!isMobile && <nav className="app-sidebar">{sidebar}</nav>}
+
+      <AnimatePresence>
+        {isMobile && menuOpen && (
+          <>
+            <motion.div
+              className="drawer-backdrop"
+              onClick={() => setMenuOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            />
+            <motion.nav
+              className="app-drawer"
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', stiffness: 360, damping: 38 }}
+            >
+              {sidebar}
+            </motion.nav>
+          </>
+        )}
+      </AnimatePresence>
 
       <main className="app-main">
         <AnimatePresence mode="wait">

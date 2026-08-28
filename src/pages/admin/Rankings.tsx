@@ -2,10 +2,12 @@ import { useStore } from '../../data/store';
 import { useI18n } from '../../i18n';
 import { computeGroupStats, gradesForStudent, periodAverage, rankGroups, rankStudents } from '../../lib/formulas';
 import { pct } from '../../lib/format';
+import { useLabel } from '../../lib/label';
 
 export default function AdminRankings() {
   const { data } = useStore();
   const { t } = useI18n();
+  const label = useLabel();
   const stats = data.groups.map((g) => computeGroupStats(g, data.students.filter((s) => s.groupId === g.id), data.grades, data.assessments, data.gradingConfig));
   const groupRanking = rankGroups(stats);
 
@@ -34,7 +36,7 @@ export default function AdminRankings() {
                   return (
                     <tr key={r.groupId}>
                       <td className="num tabular">{r.rank}</td>
-                      <td>{s.group.name}</td>
+                      <td>{label(s.group)}</td>
                       <td className="num tabular">{pct(s.average)}</td>
                       <td className="num tabular">{pct(s.median)}</td>
                       <td className="num tabular">{s.min.toFixed(0)}/{s.max.toFixed(0)}%</td>
@@ -61,7 +63,7 @@ export default function AdminRankings() {
                     <tr key={r.studentId}>
                       <td className="num tabular">{r.rank}</td>
                       <td>{user.fullName}</td>
-                      <td>{group.name}</td>
+                      <td>{label(group)}</td>
                       <td className="num tabular">{pct(r.average)}</td>
                     </tr>
                   );

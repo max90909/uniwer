@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useStore } from '../../data/store';
 import { useI18n } from '../../i18n';
 import { formatDate, LOCALE_BY_LANG } from '../../lib/format';
+import { useBookText } from '../../lib/label';
 
 export default function TeacherMaterials() {
   const { data, addBook } = useStore();
   const { t, lang } = useI18n();
+  const { chapters: bookChapters } = useBookText();
   const locale = LOCALE_BY_LANG[lang];
   const [weekId, setWeekId] = useState(data.weeks[0]?.id);
   const [title, setTitle] = useState('');
@@ -55,7 +57,7 @@ export default function TeacherMaterials() {
                 <tr key={b.id}>
                   <td>{b.title}</td>
                   <td>{b.author}</td>
-                  <td>{b.chapters}</td>
+                  <td>{bookChapters(b)}</td>
                   <td>{formatDate(b.dueDate, locale)}</td>
                 </tr>
               ))}

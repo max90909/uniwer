@@ -15,13 +15,18 @@ export interface UserRecord {
 export interface Course {
   id: string;
   name: string;
+  /** Ключ перевода. Если задан, интерфейс показывает его вместо `name`. */
+  nameKey?: string;
   totalMonths: number;
 }
 
 export interface Group {
   id: string;
   courseId: string;
+  /** Запасное имя: используется для групп, созданных администратором вручную. */
   name: string;
+  nameKey?: string;
+  nameVars?: Record<string, string | number>;
 }
 
 export interface TeacherGroup {
@@ -46,6 +51,7 @@ export interface MonthRecord {
   courseId: string;
   index: number;
   name: string;
+  nameKey?: string;
 }
 
 export interface WeekRecord {
@@ -59,10 +65,15 @@ export interface WeekRecord {
 export interface Book {
   id: string;
   weekId: string;
+  /** Названия книг и авторы — имена собственные, они не переводятся. */
   title: string;
   author: string;
   description: string;
+  descriptionKey?: string;
+  descriptionVars?: Record<string, string | number>;
   chapters: string;
+  chaptersKey?: string;
+  chaptersVars?: Record<string, string | number>;
   dueDate: string;
 }
 
@@ -70,6 +81,7 @@ export interface MaterialRecord {
   id: string;
   weekId: string;
   title: string;
+  titleKey?: string;
   type: string;
   publishedAt: string;
 }
@@ -78,6 +90,7 @@ export interface Topic {
   id: string;
   courseId: string;
   name: string;
+  nameKey?: string;
 }
 
 export type AssessmentType = 'weekly' | 'control' | 'final';

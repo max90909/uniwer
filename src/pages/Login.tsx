@@ -1,154 +1,159 @@
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useStore } from '../data/store';
+import { useState, type FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useSession } from '../lib/session';
 import { useI18n } from '../i18n';
 import { LanguageSwitcher } from '../components/Layout';
+import { ACCOUNTS } from '../data/accounts';
 import { Item, Stagger } from '../components/Reveal';
 
-type Role = 'admin' | 'teacher' | 'student';
-const ROLES: Role[] = ['student', 'teacher', 'admin'];
-
-interface Pick {
-  id: string;
-  name: string;
-  meta: string;
-}
-
-export function Login() {
-  const { data } = useStore();
-  const { login } = useSession();
-  const { t } = useI18n();
-
-  const [role, setRole] = useState<Role>('student');
-  const [groupId, setGroupId] = useState<string>('all');
-  const [query, setQuery] = useState('');
-
-  const picks: Pick[] = useMemo(() => {
-    if (role === 'admin') {
-      return [{ id: data.admin.id, name: data.admin.fullName, meta: data.admin.email }];
-    }
-    if (role === 'teacher') {
-      return data.teacherUsers.map((tu) => ({
-        id: tu.id,
-        name: tu.fullName,
-        meta: data.teacherGroups
-          .filter((tg) => tg.teacherId === tu.id)
-          .map((tg) => data.groups.find((g) => g.id === tg.groupId)?.name)
-          .filter(Boolean)
-          .join(', '),
-      }));
-    }
-    return data.students
-      .filter((s) => groupId === 'all' || s.groupId === groupId)
-      .map((s) => {
-        const u = data.allUsers.find((au) => au.id === s.userId);
-        const group = data.groups.find((g) => g.id === s.groupId);
-        return u ? { id: u.id, name: u.fullName, meta: group?.name ?? u.email } : null;
-      })
-      .filter(Boolean) as Pick[];
-  }, [role, groupId, data]);
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return q ? picks.filter((p) => p.name.toLowerCase().includes(q)) : picks;
-  }, [picks, query]);
-
+/** Глаз для показа пароля; перечёркнут, когда пароль уже виден. */
+function EyeIcon({ closed }: { closed: boolean }) {
   return (
-    <div className="login-shell">
-      <div className="login-card">
-        <aside className="login-aside">
-          <div>
-            <Link to="/" className="login-back">← {t('login.back')}</Link>
-            <h1>{t('appName')}</h1>
-            <p className="login-aside-lede">{t('login.subtitle')}</p>
-          </div>
-          <div className="login-note">{t('login.demoNote')}</div>
-          <LanguageSwitcher />
-        </aside>
-
-        <div className="login-main">
-          <span className="login-step-label">{t('login.pickRole')}</span>
-          <div className="role-tabs" role="tablist">
-            {ROLES.map((r) => (
-              <button
-                key={r}
-                role="tab"
-                aria-selected={role === r}
-                className={`role-tab${role === r ? ' active' : ''}`}
-                onClick={() => {
-                  setRole(r);
-                  setQuery('');
-                }}
-              >
-                {/* The pill slides between tabs rather than cutting, so the eye
-                    follows the selection instead of re-finding it. */}
-                {role === r && (
-                  <motion.span className="role-tab-pill" layoutId="role-tab-pill" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />
-                )}
-                <span className="role-tab-text">{t(`role.${r}`)}</span>
-              </button>
-            ))}
-          </div>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={role}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-            >
-              {role === 'student' && (
-                <div className="login-filters">
-                  <select className="input" value={groupId} onChange={(e) => setGroupId(e.target.value)} aria-label={t('login.allGroups')}>
-                    <option value="all">{t('login.allGroups')}</option>
-                    {data.groups.map((g) => (
-                      <option key={g.id} value={g.id}>{g.name}</option>
-                    ))}
-                  </select>
-                  <input
-                    className="input"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder={t('login.searchPlaceholder')}
-                    aria-label={t('login.searchPlaceholder')}
-                  />
-                </div>
-              )}
-
-              <div className="login-count">{t('login.countFound', { count: filtered.length })}</div>
-
-              {filtered.length === 0 ? (
-                <p className="empty-note">{t('login.nothingFound')}</p>
-              ) : (
-                <Stagger className="user-grid login-user-grid">
-                  {filtered.map((p) => (
-                    <Item key={p.id}>
-                      <button className="user-chip" onClick={() => login(p.id)}>
-                        <span className="avatar" aria-hidden="true">{initials(p.name)}</span>
-                        <span className="user-chip-text">
-                          <span className="name">{p.name}</span>
-                          <span className="meta">{p.meta}</span>
-                        </span>
-                      </button>
-                    </Item>
-                  ))}
-                </Stagger>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
-    </div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+      <path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12Z" />
+      <circle cx="12" cy="12" r="2.7" />
+      {closed && <path d="m4 20 16-16" />}
+    </svg>
   );
 }
 
-function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? '')
-    .join('');
+export function Login() {
+  const { signIn } = useSession();
+  const { t } = useI18n();
+  const navigate = useNavigate();
+
+  const [login, setLogin] = useState('');
+  const [password, setPassword] = useState('');
+  const [reveal, setReveal] = useState(false);
+  const [error, setError] = useState(false);
+
+  function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (signIn(login, password)) {
+      navigate('/', { replace: true });
+    } else {
+      setError(true);
+    }
+  }
+
+  // Печать в любом поле снимает сообщение об ошибке — иначе оно висит,
+  // пока пользователь исправляет опечатку, и выглядит как новая ошибка.
+  const clearOnType = (setter: (v: string) => void) => (v: string) => {
+    setter(v);
+    if (error) setError(false);
+  };
+
+  return (
+    <div className="auth">
+      <motion.aside
+        className="auth-brand"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Stagger className="auth-brand-inner">
+          <Item>
+            <Link to="/" className="auth-back">← {t('login.back')}</Link>
+          </Item>
+          <Item><h1>{t('appName')}</h1></Item>
+          <Item><p>{t('login.brandLede')}</p></Item>
+          <Item>
+            <ul className="auth-points">
+              <li>{t('login.point1')}</li>
+              <li>{t('login.point2')}</li>
+              <li>{t('login.point3')}</li>
+            </ul>
+          </Item>
+        </Stagger>
+      </motion.aside>
+
+      <div className="auth-panel">
+        <motion.form
+          className="auth-form"
+          onSubmit={onSubmit}
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        >
+          <h2>{t('login.formTitle')}</h2>
+          <p className="auth-sub">{t('login.formSub')}</p>
+
+          <div className="field">
+            <label htmlFor="auth-login">{t('login.username')}</label>
+            <input
+              id="auth-login"
+              className="input"
+              value={login}
+              onChange={(e) => clearOnType(setLogin)(e.target.value)}
+              autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
+              required
+            />
+          </div>
+
+          {/* Кнопка показа пароля лежит рядом с полем, а не внутри <label>:
+              иначе её текст попадает в доступное имя поля и скринридер читает
+              «Пароль Показать пароль». */}
+          <div className="field">
+            <label htmlFor="auth-password">{t('login.password')}</label>
+            <span className="input-wrap">
+              <input
+                id="auth-password"
+                className="input"
+                type={reveal ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => clearOnType(setPassword)(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                className="reveal-btn"
+                onClick={() => setReveal((v) => !v)}
+                aria-label={t(reveal ? 'login.hidePassword' : 'login.showPassword')}
+                aria-pressed={reveal}
+              >
+                <EyeIcon closed={reveal} />
+              </button>
+            </span>
+          </div>
+
+          {error && (
+            <motion.p
+              className="auth-error"
+              role="alert"
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.22 }}
+            >
+              {t('login.error')}
+            </motion.p>
+          )}
+
+          <button type="submit" className="btn primary lg auth-submit">{t('login.submit')}</button>
+
+          <details className="auth-hint">
+            <summary>{t('login.hintTitle')}</summary>
+            <table className="auth-hint-table">
+              <tbody>
+                {ACCOUNTS.map((a) => (
+                  <tr key={a.login}>
+                    <td>{t(`role.${a.role}`)}</td>
+                    <td className="mono">{a.login}</td>
+                    <td className="mono">{a.password}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </details>
+
+          <div className="auth-foot">
+            <LanguageSwitcher subtle />
+          </div>
+        </motion.form>
+      </div>
+    </div>
+  );
 }

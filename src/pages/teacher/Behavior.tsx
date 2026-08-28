@@ -5,6 +5,7 @@ import { useI18n } from '../../i18n';
 import type { BehaviorType } from '../../types';
 import { BEHAVIOR_TONE } from '../../types';
 import { behaviorKey, formatDate, LOCALE_BY_LANG } from '../../lib/format';
+import { useLabel } from '../../lib/label';
 
 const TYPES = Object.keys(BEHAVIOR_TONE) as BehaviorType[];
 
@@ -12,6 +13,7 @@ export default function TeacherBehavior() {
   const { data, addBehaviorEvent } = useStore();
   const { user } = useSession();
   const { t, lang } = useI18n();
+  const label = useLabel();
   const locale = LOCALE_BY_LANG[lang];
   const myGroupIds = data.teacherGroups.filter((tg) => tg.teacherId === user!.id).map((tg) => tg.groupId);
   const myGroups = data.groups.filter((g) => myGroupIds.includes(g.id));
@@ -47,7 +49,7 @@ export default function TeacherBehavior() {
           <div className="field">
             <label>{t('teacher.selectGroup')}</label>
             <select className="input" value={groupId} onChange={(e) => { setGroupId(e.target.value); setStudentId(undefined as any); }}>
-              {myGroups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+              {myGroups.map((g) => <option key={g.id} value={g.id}>{label(g)}</option>)}
             </select>
           </div>
           <div className="field">

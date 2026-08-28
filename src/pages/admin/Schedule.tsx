@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useStore } from '../../data/store';
 import { useI18n } from '../../i18n';
 import { assessmentKey } from '../../lib/format';
+import { useLabel } from '../../lib/label';
 
 export default function AdminSchedule() {
   const { data, rescheduleWeek } = useStore();
   const { t } = useI18n();
+  const label = useLabel();
   const [drafts, setDrafts] = useState<Record<string, { start: string; end: string }>>({});
   const [savedId, setSavedId] = useState<string | null>(null);
 
@@ -28,7 +30,7 @@ export default function AdminSchedule() {
 
       {data.months.map((month) => (
         <div className="card" key={month.id} style={{ marginBottom: 14 }}>
-          <h3>{t('common.month')} {month.index} · {month.name}</h3>
+          <h3>{t('common.month')} {month.index} · {label(month)}</h3>
           <div className="table-wrap">
             <table>
               <thead>

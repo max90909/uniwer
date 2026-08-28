@@ -4,11 +4,13 @@ import { useSession } from '../../lib/session';
 import { useI18n } from '../../i18n';
 import { computeGroupStats, gradesForStudent, periodAverage, rankGroups, rankStudents } from '../../lib/formulas';
 import { pct } from '../../lib/format';
+import { useLabel } from '../../lib/label';
 
 export default function TeacherRankings() {
   const { data } = useStore();
   const { user } = useSession();
   const { t } = useI18n();
+  const label = useLabel();
   const myGroupIds = data.teacherGroups.filter((tg) => tg.teacherId === user!.id).map((tg) => tg.groupId);
   const myGroups = data.groups.filter((g) => myGroupIds.includes(g.id));
   const [groupId, setGroupId] = useState(myGroups[0]?.id);
@@ -34,7 +36,7 @@ export default function TeacherRankings() {
           <div className="pill-row" style={{ marginBottom: 12 }}>
             {myGroups.map((g) => (
               <button key={g.id} className={`btn${groupId === g.id ? ' btn-selected' : ''}`} onClick={() => setGroupId(g.id)}>
-                {g.name}
+                {label(g)}
               </button>
             ))}
           </div>
@@ -65,7 +67,7 @@ export default function TeacherRankings() {
                   return (
                     <tr key={r.groupId} style={myGroupIds.includes(r.groupId) ? { background: 'var(--accent-soft)' } : undefined}>
                       <td className="num tabular">{r.rank}</td>
-                      <td>{stats.group.name}</td>
+                      <td>{label(stats.group)}</td>
                       <td className="num tabular">{pct(r.average)}</td>
                     </tr>
                   );

@@ -3,6 +3,7 @@ import { useStore } from '../../data/store';
 import { useI18n } from '../../i18n';
 import { computeGroupStats } from '../../lib/formulas';
 import { pct } from '../../lib/format';
+import { useLabel } from '../../lib/label';
 
 export default function AdminGroupsCourses() {
   const { data, addGroup, addStudents } = useStore();
@@ -11,6 +12,7 @@ export default function AdminGroupsCourses() {
   const [newGroupName, setNewGroupName] = useState('');
   const [targetGroupId, setTargetGroupId] = useState(data.groups[0]?.id);
   const [namesText, setNamesText] = useState('');
+  const label = useLabel();
 
   const handleCreateGroup = () => {
     if (!newGroupName.trim()) return;
@@ -31,7 +33,7 @@ export default function AdminGroupsCourses() {
       <div className="page-header">
         <div>
           <h1>{t('admin.groupsCoursesTitle')}</h1>
-          <p className="lede">{t('admin.groupsCoursesSub', { course: data.course.name, months: data.course.totalMonths, weeks: data.weeks.length })}</p>
+          <p className="lede">{t('admin.groupsCoursesSub', { course: label(data.course), months: data.course.totalMonths, weeks: data.weeks.length })}</p>
         </div>
       </div>
 
@@ -42,7 +44,7 @@ export default function AdminGroupsCourses() {
           const stats = computeGroupStats(g, groupStudents, data.grades, data.assessments, data.gradingConfig);
           return (
             <div className="card" key={g.id}>
-              <h3>{g.name}</h3>
+              <h3>{label(g)}</h3>
               <dl style={{ margin: 0, display: 'grid', gridTemplateColumns: '1fr auto', rowGap: 6 }}>
                 <dt>{t('admin.students')}</dt><dd className="mono tabular" style={{ margin: 0 }}>{groupStudents.length}</dd>
                 <dt>{t('admin.teachersLabel')}</dt><dd style={{ margin: 0, textAlign: 'right' }}>{teachers.join(', ') || '—'}</dd>
@@ -69,7 +71,7 @@ export default function AdminGroupsCourses() {
           <div className="field" style={{ marginBottom: 10 }}>
             <label>{t('common.group')}</label>
             <select className="input" value={targetGroupId} onChange={(e) => setTargetGroupId(e.target.value)}>
-              {data.groups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+              {data.groups.map((g) => <option key={g.id} value={g.id}>{label(g)}</option>)}
             </select>
           </div>
           <div className="field">

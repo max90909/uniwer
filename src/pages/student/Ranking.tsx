@@ -4,11 +4,13 @@ import { useI18n } from '../../i18n';
 import { computeGroupStats, gradesForStudent, periodAverage, rankGroups, rankStudents } from '../../lib/formulas';
 import { StatTile } from '../../components/StatTile';
 import { pct } from '../../lib/format';
+import { useLabel } from '../../lib/label';
 
 export default function StudentRanking() {
   const { data } = useStore();
   const { user } = useSession();
   const { t } = useI18n();
+  const label = useLabel();
   if (!user) return null;
 
   const student = data.students.find((s) => s.userId === user.id)!;
@@ -60,7 +62,7 @@ export default function StudentRanking() {
                 return (
                   <tr key={r.groupId} style={isMine ? { background: 'var(--accent-soft)' } : undefined}>
                     <td className="num tabular">{r.rank}</td>
-                    <td>{stats.group.name}{isMine ? t('student.myGroupTag') : ''}</td>
+                    <td>{label(stats.group)}{isMine ? t('student.myGroupTag') : ''}</td>
                     <td className="num tabular">{pct(r.average)}</td>
                     <td className="num tabular">{pct(stats.completionRate)}</td>
                   </tr>

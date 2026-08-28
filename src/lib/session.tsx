@@ -1,16 +1,18 @@
-// Демо-сессия. Настоящий вход по email+паролю (раздел 11 проектного документа) появится вместе
-// с реальным backend'ом; здесь достаточно выбора пользователя из демо-набора, чтобы сразу увидеть
-// все три роли не поднимая сервер.
+// Сессия демо-стенда. Настоящий вход по email+паролю (раздел 11 проектного документа)
+// появится вместе с реальным backend'ом; здесь пара логин/пароль сверяется на клиенте
+// со списком из data/accounts.ts — этого достаточно, чтобы зайти в любую из трёх ролей.
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useStore } from '../data/store';
+import { resolveAccount } from '../data/accounts';
 import type { UserRecord } from '../types';
 
-const SESSION_KEY = 'vedomost-demo-session';
+const SESSION_KEY = 'vedomost-session';
 
 interface SessionApi {
   user: UserRecord | null;
-  login: (userId: string) => void;
+  /** Возвращает true при успешном входе; false — если пара логин/пароль неверна. */
+  signIn: (login: string, password: string) => boolean;
   logout: () => void;
 }
 
@@ -25,13 +27,19 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     else localStorage.removeItem(SESSION_KEY);
   }, [userId]);
 
+  const signIn = useCallback((login: string, password: string) => {
+    const id = resolveAccount(login, password);
+    if (!id) return false;
+    setUserId(id);
+    return true;
+  }, []);
+
+  const logout = useCallback(() => setUserId(null), []);
+
   const user = data.allUsers.find((u) => u.id === userId) ?? null;
 
-  return (
-    <SessionContext.Provider value={{ user, login: setUserId, logout: () => setUserId(null) }}>
-      {children}
-    </SessionContext.Provider>
-  );
+  const value = useMemo(() => ({ user, signIn, logout }), [user, signIn, logout]);
+  return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }
 
 export function useSession(): SessionApi {

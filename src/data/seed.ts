@@ -55,14 +55,14 @@ function personName(i: number): { full: string; gender: 'm' | 'f' } {
 }
 
 // ---------- курс, темы, группы ----------
-export const course: Course = { id: 'course-1', name: 'Английский язык · поток 2026', totalMonths: 9 };
+export const course: Course = { id: 'course-1', name: 'Английский язык · поток 2026', nameKey: 'course.name', totalMonths: 9 };
 
 export const topics: Topic[] = [
-  { id: 'topic-grammar', courseId: course.id, name: 'Грамматика' },
-  { id: 'topic-vocab', courseId: course.id, name: 'Словарный запас' },
-  { id: 'topic-reading', courseId: course.id, name: 'Чтение' },
-  { id: 'topic-listening', courseId: course.id, name: 'Аудирование' },
-  { id: 'topic-speaking', courseId: course.id, name: 'Разговорная практика' },
+  { id: 'topic-grammar', courseId: course.id, name: 'Грамматика', nameKey: 'topic.grammar' },
+  { id: 'topic-vocab', courseId: course.id, name: 'Словарный запас', nameKey: 'topic.vocab' },
+  { id: 'topic-reading', courseId: course.id, name: 'Чтение', nameKey: 'topic.reading' },
+  { id: 'topic-listening', courseId: course.id, name: 'Аудирование', nameKey: 'topic.listening' },
+  { id: 'topic-speaking', courseId: course.id, name: 'Разговорная практика', nameKey: 'topic.speaking' },
 ];
 
 const GROUP_DEFS = [
@@ -71,7 +71,17 @@ const GROUP_DEFS = [
   { id: 'group-c', name: 'Группа C' },
 ];
 
-export const groups: Group[] = GROUP_DEFS.map((g) => ({ id: g.id, courseId: course.id, name: g.name }));
+// Буква группы подставляется в перевод, поэтому «Группа A» / «Group A» / «A topary»
+// собираются на лету, а не хранятся строкой.
+export const groups: Group[] = GROUP_DEFS.map((g) => ({
+  id: g.id,
+  courseId: course.id,
+  name: g.name,
+  nameKey: 'group.named',
+  // Берём последнее слово: буква группы — не цифра, поэтому «убрать всё
+  // нецифровое» стирало бы и её саму.
+  nameVars: { letter: g.name.split(' ').pop() ?? g.name },
+}));
 
 // ---------- пользователи ----------
 export const admin: UserRecord = {
@@ -145,12 +155,19 @@ for (const g of GROUP_DEFS) {
 export const months: MonthRecord[] = [];
 export const weeks: WeekRecord[] = [];
 const MONTH_NAMES = ['Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь', 'Январь', 'Февраль', 'Март', 'Апрель', 'Май'];
+const MONTH_KEYS = ['sep', 'oct', 'nov', 'dec', 'jan', 'feb', 'mar', 'apr', 'may'];
 const START = new Date('2026-01-12T00:00:00Z');
 
 let cursor = new Date(START);
 for (let m = 1; m <= course.totalMonths; m++) {
   const monthId = `month-${m}`;
-  months.push({ id: monthId, courseId: course.id, index: m, name: MONTH_NAMES[(m - 1) % MONTH_NAMES.length] });
+  months.push({
+    id: monthId,
+    courseId: course.id,
+    index: m,
+    name: MONTH_NAMES[(m - 1) % MONTH_NAMES.length],
+    nameKey: `month.${MONTH_KEYS[(m - 1) % MONTH_KEYS.length]}`,
+  });
   for (let w = 1; w <= 4; w++) {
     const startDate = new Date(cursor);
     const endDate = new Date(cursor);
@@ -185,7 +202,11 @@ weeks.forEach((w, i) => {
     title: BOOK_TITLES[i % BOOK_TITLES.length][0],
     author: BOOK_TITLES[i % BOOK_TITLES.length][1],
     description: `Основной учебник недели ${w.index}`,
+    descriptionKey: 'material.primaryBook',
+    descriptionVars: { week: w.index },
     chapters: `Главы ${((i % 5) + 1)}–${((i % 5) + 2)}`,
+    chaptersKey: 'material.chapterRange',
+    chaptersVars: { from: (i % 5) + 1, to: (i % 5) + 2 },
     dueDate: w.endDate,
   });
   books.push({
@@ -194,13 +215,18 @@ weeks.forEach((w, i) => {
     title: t2,
     author: a2,
     description: `Дополнительный источник недели ${w.index}`,
+    descriptionKey: 'material.extraBook',
+    descriptionVars: { week: w.index },
     chapters: `Глава ${((i % 4) + 1)}`,
+    chaptersKey: 'material.chapterOne',
+    chaptersVars: { n: (i % 4) + 1 },
     dueDate: w.endDate,
   });
   materials.push({
     id: `material-${w.id}-1`,
     weekId: w.id,
     title: t1 === 'Listening Extra' ? 'Аудиозапись к уроку' : 'Раздаточный материал (PDF)',
+    titleKey: t1 === 'Listening Extra' ? 'material.audio' : 'material.handout',
     type: 'pdf',
     publishedAt: w.startDate,
   });

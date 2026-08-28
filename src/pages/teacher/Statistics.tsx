@@ -6,11 +6,13 @@ import { computeGroupStats, gradesForStudent, periodAverage } from '../../lib/fo
 import { LineChart } from '../../components/LineChart';
 import { StatTile } from '../../components/StatTile';
 import { pct } from '../../lib/format';
+import { useLabel } from '../../lib/label';
 
 export default function TeacherStatistics() {
   const { data } = useStore();
   const { user } = useSession();
   const { t } = useI18n();
+  const label = useLabel();
   const myGroupIds = data.teacherGroups.filter((tg) => tg.teacherId === user!.id).map((tg) => tg.groupId);
   const myGroups = data.groups.filter((g) => myGroupIds.includes(g.id));
   const [groupId, setGroupId] = useState(myGroups[0]?.id);
@@ -56,7 +58,7 @@ export default function TeacherStatistics() {
       <div className="pill-row" style={{ marginBottom: 14 }}>
         {myGroups.map((g) => (
           <button key={g.id} className={`btn${groupId === g.id ? ' btn-selected' : ''}`} onClick={() => setGroupId(g.id)}>
-            {g.name}
+            {label(g)}
           </button>
         ))}
       </div>
@@ -80,7 +82,7 @@ export default function TeacherStatistics() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {topicAverages.map(({ topic, average }) => (
               <div key={topic.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>{topic.name}</span>
+                <span>{label(topic)}</span>
                 <span className="mono tabular">{average !== null ? pct(average) : '—'}</span>
               </div>
             ))}

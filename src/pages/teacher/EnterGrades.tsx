@@ -3,11 +3,13 @@ import { useStore } from '../../data/store';
 import { useSession } from '../../lib/session';
 import { useI18n } from '../../i18n';
 import { assessmentKey, formatDate, LOCALE_BY_LANG } from '../../lib/format';
+import { useLabel } from '../../lib/label';
 
 export default function TeacherEnterGrades() {
   const { data, recordGrades } = useStore();
   const { user } = useSession();
   const { t, lang } = useI18n();
+  const label = useLabel();
   const locale = LOCALE_BY_LANG[lang];
   const myGroupIds = data.teacherGroups.filter((tg) => tg.teacherId === user!.id).map((tg) => tg.groupId);
   const myGroups = data.groups.filter((g) => myGroupIds.includes(g.id));
@@ -79,7 +81,7 @@ export default function TeacherEnterGrades() {
             <label>{t('teacher.selectGroup')}</label>
             <select className="input" value={groupId} onChange={(e) => setGroupId(e.target.value)}>
               {myGroups.map((g) => (
-                <option key={g.id} value={g.id}>{g.name}</option>
+                <option key={g.id} value={g.id}>{label(g)}</option>
               ))}
             </select>
           </div>
@@ -101,7 +103,7 @@ export default function TeacherEnterGrades() {
             <select className="input" value={assessmentId} onChange={(e) => setAssessmentId(e.target.value)}>
               {weekAssessments.map((a) => (
                 <option key={a.id} value={a.id}>
-                  {t(assessmentKey(a.type))}{a.topicId ? ` · ${data.topics.find((tp) => tp.id === a.topicId)?.name}` : ''} ({a.maxScore})
+                  {t(assessmentKey(a.type))}{a.topicId ? ` · ${label(data.topics.find((tp) => tp.id === a.topicId))}` : ''} ({a.maxScore})
                 </option>
               ))}
             </select>
@@ -113,7 +115,7 @@ export default function TeacherEnterGrades() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <h3 style={{ marginBottom: 0 }}>
             {t(assessmentKey(assessment.type))}
-            {assessment.topicId ? ` · ${data.topics.find((tp) => tp.id === assessment.topicId)?.name}` : ''} · {assessment.maxScore}
+            {assessment.topicId ? ` · ${label(data.topics.find((tp) => tp.id === assessment.topicId))}` : ''} · {assessment.maxScore}
           </h3>
           <span className="mono" style={{ color: 'var(--muted)', fontSize: '0.82rem' }}>{t('teacher.filled', { filled: filledCount, total: roster.length })}</span>
         </div>

@@ -5,6 +5,7 @@ import { useI18n } from '../../i18n';
 import { gradesForStudent, periodAverage } from '../../lib/formulas';
 import { assessmentKey, formatDate, LOCALE_BY_LANG, pct } from '../../lib/format';
 import { StatTile } from '../../components/StatTile';
+import { useLabel } from '../../lib/label';
 
 type Filter = 'all' | 'weekly' | 'control' | 'final';
 
@@ -12,6 +13,7 @@ export default function StudentResults() {
   const { data } = useStore();
   const { user } = useSession();
   const { t, lang } = useI18n();
+  const label = useLabel();
   const [filter, setFilter] = useState<Filter>('all');
   if (!user) return null;
   const locale = LOCALE_BY_LANG[lang];
@@ -61,7 +63,7 @@ export default function StudentResults() {
               <tr key={grade.id}>
                 <td>{formatDate(assessment.administeredOn, locale)}</td>
                 <td>{t(assessmentKey(assessment.type))}</td>
-                <td>{data.topics.find((tp) => tp.id === assessment.topicId)?.name ?? '—'}</td>
+                <td>{label(data.topics.find((tp) => tp.id === assessment.topicId))}</td>
                 <td className="num tabular">{grade.scoreCorrect} / {grade.scoreTotal}</td>
                 <td className="num tabular">{pct(grade.scorePercent)}</td>
               </tr>

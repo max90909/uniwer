@@ -19,11 +19,13 @@ import {
   topicSummaries,
 } from '../../lib/formulas';
 import { assessmentKey, formatDate, LOCALE_BY_LANG, pct, signedPct } from '../../lib/format';
+import { useLabel } from '../../lib/label';
 
 export default function StudentDashboard() {
   const { data } = useStore();
   const { user } = useSession();
   const { t, lang } = useI18n();
+  const label = useLabel();
   if (!user) return null;
 
   const student = data.students.find((s) => s.userId === user.id)!;
@@ -57,7 +59,7 @@ export default function StudentDashboard() {
         <ScoreGauge value={avg.average} label={t('student.currentResult')} delta={progress.delta} size={200} />
         <div className="hero-text">
           <h1>{t('student.greeting', { name: user.fullName.split(' ')[0] })}</h1>
-          <p className="lede">{group.name} · {data.course.name}</p>
+          <p className="lede">{label(group)} · {label(data.course)}</p>
           <div className="hero-meta">
             <span className="item">
               <span className="k">{t('student.rankInGroup')}</span>
@@ -109,7 +111,7 @@ export default function StudentDashboard() {
             <>
               <p style={{ margin: '4px 0' }}>
                 {t(assessmentKey(upcoming.type))}
-                {upcoming.topicId ? ` · ${data.topics.find((tp) => tp.id === upcoming.topicId)?.name}` : ''}
+                {upcoming.topicId ? ` · ${label(data.topics.find((tp) => tp.id === upcoming.topicId))}` : ''}
               </p>
               <p className="mono" style={{ color: 'var(--muted)' }}>{formatDate(upcoming.administeredOn, locale)}</p>
             </>
@@ -123,11 +125,11 @@ export default function StudentDashboard() {
           {strongest && weakest ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>{t('student.strongest')}: <b>{strongest.topic.name}</b></span>
+                <span>{t('student.strongest')}: <b>{label(strongest.topic)}</b></span>
                 <span className={`badge ${scoreTone(strongest.latest ?? 0)} tabular`}>{pct(strongest.latest ?? 0)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>{t('student.weakest')}: <b>{weakest.topic.name}</b></span>
+                <span>{t('student.weakest')}: <b>{label(weakest.topic)}</b></span>
                 <span className={`badge ${scoreTone(weakest.latest ?? 0)} tabular`}>{pct(weakest.latest ?? 0)}</span>
               </div>
             </div>
@@ -155,7 +157,7 @@ export default function StudentDashboard() {
                 <tr key={grade.id}>
                   <td>{formatDate(assessment.administeredOn, locale)}</td>
                   <td>{t(assessmentKey(assessment.type))}</td>
-                  <td>{data.topics.find((tp) => tp.id === assessment.topicId)?.name ?? '—'}</td>
+                  <td>{label(data.topics.find((tp) => tp.id === assessment.topicId))}</td>
                   <td className="num tabular">{grade.scoreCorrect} / {grade.scoreTotal}</td>
                   <td className="num tabular">{pct(grade.scorePercent)}</td>
                 </tr>
@@ -175,7 +177,7 @@ export default function StudentDashboard() {
           <Item key={tp.topic.id}>
             <div className="card" style={{ height: '100%' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10 }}>
-                <h3 style={{ marginBottom: 0 }}>{tp.topic.name}</h3>
+                <h3 style={{ marginBottom: 0 }}>{label(tp.topic)}</h3>
                 <TrendBadge trend={tp.trend} />
               </div>
               <div style={{ marginTop: 14 }}>

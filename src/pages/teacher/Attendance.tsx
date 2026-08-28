@@ -4,6 +4,7 @@ import { useSession } from '../../lib/session';
 import { useI18n } from '../../i18n';
 import type { AttendanceStatus } from '../../types';
 import { attendanceKey, formatDate, LOCALE_BY_LANG } from '../../lib/format';
+import { useLabel } from '../../lib/label';
 
 const STATUSES: AttendanceStatus[] = ['present', 'late', 'absent', 'excused'];
 
@@ -11,6 +12,7 @@ export default function TeacherAttendance() {
   const { data, markAttendance } = useStore();
   const { user } = useSession();
   const { t, lang } = useI18n();
+  const label = useLabel();
   const locale = LOCALE_BY_LANG[lang];
   const myGroupIds = data.teacherGroups.filter((tg) => tg.teacherId === user!.id).map((tg) => tg.groupId);
   const myGroups = data.groups.filter((g) => myGroupIds.includes(g.id));
@@ -54,7 +56,7 @@ export default function TeacherAttendance() {
           <div className="field">
             <label>{t('teacher.selectGroup')}</label>
             <select className="input" value={groupId} onChange={(e) => setGroupId(e.target.value)}>
-              {myGroups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+              {myGroups.map((g) => <option key={g.id} value={g.id}>{label(g)}</option>)}
             </select>
           </div>
           <div className="field">
