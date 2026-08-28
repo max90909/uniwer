@@ -67,7 +67,8 @@ export function LineChart({ points, height = 180 }: { points: Point[]; height?: 
           <stop offset="100%" className="chart-grad-b" />
         </linearGradient>
         <filter id="chart-glow" x="-40%" y="-40%" width="180%" height="180%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="var(--accent)" floodOpacity="0.35" />
+          {/* style, not attributes: var() does not resolve in SVG presentation attributes */}
+          <feDropShadow dx="0" dy="2" stdDeviation="3" style={{ floodColor: 'var(--accent)', floodOpacity: 0.35 }} />
         </filter>
       </defs>
 

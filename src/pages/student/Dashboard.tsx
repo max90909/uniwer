@@ -3,8 +3,12 @@ import { useStore } from '../../data/store';
 import { useSession } from '../../lib/session';
 import { useI18n } from '../../i18n';
 import { StatTile } from '../../components/StatTile';
+import { ScoreGauge } from '../../components/ScoreGauge';
 import { ProgressBar } from '../../components/ProgressBar';
 import { TrendBadge } from '../../components/TrendBadge';
+import { BandLegend } from '../../components/BandLegend';
+import { Item, Stagger } from '../../components/Reveal';
+import { scoreTone } from '../../lib/score';
 import {
   attendancePercent,
   computeGroupStats,
@@ -49,24 +53,54 @@ export default function StudentDashboard() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
+      <div className="card hero-card" style={{ marginBottom: 16 }}>
+        <ScoreGauge value={avg.average} label={t('student.currentResult')} delta={progress.delta} size={200} />
+        <div className="hero-text">
           <h1>{t('student.greeting', { name: user.fullName.split(' ')[0] })}</h1>
           <p className="lede">{group.name} · {data.course.name}</p>
+          <div className="hero-meta">
+            <span className="item">
+              <span className="k">{t('student.rankInGroup')}</span>
+              <span className="v tabular">{myRank.rank} / {groupStudentIds.length}</span>
+            </span>
+            <span className="item">
+              <span className="k">{t('student.attendanceLabel')}</span>
+              <span className="v tabular">{pct(myAttendance.percent)}</span>
+            </span>
+            <span className="item">
+              <span className="k">{t('student.groupAverage')}</span>
+              <span className="v tabular">{pct(groupStats.average)}</span>
+            </span>
+          </div>
+          <BandLegend />
         </div>
       </div>
 
-      <div className="grid cols-4" style={{ marginBottom: 16 }}>
-        <StatTile label={t('student.currentResult')} value={pct(avg.average)} />
-        <StatTile
-          label={t('student.progressSinceStart')}
-          value={signedPct(progress.delta)}
-          sub={`${progress.start.toFixed(0)}% → ${progress.current.toFixed(0)}%`}
-          tone={progress.delta >= 0 ? 'positive' : 'negative'}
-        />
-        <StatTile label={t('student.rankInGroup')} value={`${myRank.rank} / ${groupStudentIds.length}`} sub={t('student.avgGroupLabel', { value: pct(groupStats.average) })} />
-        <StatTile label={t('student.attendanceLabel')} value={pct(myAttendance.percent)} sub={t('student.attendanceSub', { present: myAttendance.present, absent: myAttendance.absent })} />
-      </div>
+      <Stagger className="grid cols-3" style={{ marginBottom: 16 }}>
+        <Item>
+          <StatTile
+            label={t('student.progressSinceStart')}
+            value={signedPct(progress.delta)}
+            sub={`${progress.start.toFixed(0)}% → ${progress.current.toFixed(0)}%`}
+            tone={progress.delta >= 0 ? 'positive' : 'negative'}
+          />
+        </Item>
+        <Item>
+          <StatTile
+            label={t('student.rankInGroup')}
+            value={`${myRank.rank} / ${groupStudentIds.length}`}
+            sub={t('student.avgGroupLabel', { value: pct(groupStats.average) })}
+          />
+        </Item>
+        <Item>
+          <StatTile
+            label={t('student.attendanceLabel')}
+            numeric={myAttendance.percent}
+            numericSuffix="%"
+            sub={t('student.attendanceSub', { present: myAttendance.present, absent: myAttendance.absent })}
+          />
+        </Item>
+      </Stagger>
 
       <div className="grid cols-2">
         <div className="card">
@@ -90,11 +124,11 @@ export default function StudentDashboard() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>{t('student.strongest')}: <b>{strongest.topic.name}</b></span>
-                <span className="badge positive tabular">{pct(strongest.latest ?? 0)}</span>
+                <span className={`badge ${scoreTone(strongest.latest ?? 0)} tabular`}>{pct(strongest.latest ?? 0)}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>{t('student.weakest')}: <b>{weakest.topic.name}</b></span>
-                <span className="badge warning tabular">{pct(weakest.latest ?? 0)}</span>
+                <span className={`badge ${scoreTone(weakest.latest ?? 0)} tabular`}>{pct(weakest.latest ?? 0)}</span>
               </div>
             </div>
           ) : (
@@ -136,22 +170,25 @@ export default function StudentDashboard() {
         </div>
       </div>
 
-      <div className="grid cols-3" style={{ marginTop: 16 }}>
+      <Stagger className="grid cols-3" style={{ marginTop: 16 }}>
         {topics.map((tp) => (
-          <div className="card" key={tp.topic.id}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <h3 style={{ marginBottom: 0 }}>{tp.topic.name}</h3>
-              <TrendBadge trend={tp.trend} />
+          <Item key={tp.topic.id}>
+            <div className="card" style={{ height: '100%' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10 }}>
+                <h3 style={{ marginBottom: 0 }}>{tp.topic.name}</h3>
+                <TrendBadge trend={tp.trend} />
+              </div>
+              <div style={{ marginTop: 14 }}>
+                {tp.latest !== null ? (
+                  <ProgressBar value={tp.latest} showValue ticks />
+                ) : (
+                  <span className="mono" style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>{t('common.noData')}</span>
+                )}
+              </div>
             </div>
-            <div style={{ margin: '10px 0 6px' }}>
-              <ProgressBar value={tp.latest ?? 0} />
-            </div>
-            <span className="mono" style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
-              {tp.latest !== null ? pct(tp.latest) : t('common.noData')}
-            </span>
-          </div>
+          </Item>
         ))}
-      </div>
+      </Stagger>
     </div>
   );
 }

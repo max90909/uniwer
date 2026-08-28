@@ -5,6 +5,10 @@ import { useI18n } from '../../i18n';
 import { gradesForStudent, periodAverage, progressScore } from '../../lib/formulas';
 import { LineChart } from '../../components/LineChart';
 import { StatTile } from '../../components/StatTile';
+import { ScoreGauge } from '../../components/ScoreGauge';
+import { ProgressBar } from '../../components/ProgressBar';
+import { BandLegend } from '../../components/BandLegend';
+import { Item, Stagger } from '../../components/Reveal';
 import { pct, signedPct } from '../../lib/format';
 
 export default function StudentProgress() {
@@ -34,26 +38,56 @@ export default function StudentProgress() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
+      <div className="card hero-card" style={{ marginBottom: 16 }}>
+        <ScoreGauge value={progress.current} label={t('student.currentResultLabel')} delta={progress.delta} size={200} />
+        <div className="hero-text">
           <h1>{t('student.progressTitle')}</h1>
           <p className="lede">{t('student.progressSub')}</p>
+          <div className="hero-meta">
+            <span className="item">
+              <span className="k">{t('student.startResult')}</span>
+              <span className="v">{pct(progress.start)}</span>
+            </span>
+            <span className="item">
+              <span className="k">{t('student.progress')}</span>
+              <span className="v" style={{ color: progress.delta >= 0 ? 'var(--positive)' : 'var(--negative)' }}>
+                {signedPct(progress.delta)}
+              </span>
+            </span>
+          </div>
+          <BandLegend />
         </div>
       </div>
 
-      <div className="grid cols-4" style={{ marginBottom: 16 }}>
-        <StatTile label={t('student.startResult')} value={pct(progress.start)} />
-        <StatTile label={t('student.currentResultLabel')} value={pct(progress.current)} />
-        <StatTile label={t('student.progress')} value={signedPct(progress.delta)} tone={progress.delta >= 0 ? 'positive' : 'negative'} />
-        <StatTile label={t('student.bestWorst')} value={`${best.toFixed(0)}% / ${worst.toFixed(0)}%`} />
-      </div>
+      <Stagger className="grid cols-3" style={{ marginBottom: 16 }}>
+        <Item><StatTile label={t('student.startResult')} value={pct(progress.start)} /></Item>
+        <Item>
+          <StatTile
+            label={t('student.progress')}
+            value={signedPct(progress.delta)}
+            tone={progress.delta >= 0 ? 'positive' : 'negative'}
+          />
+        </Item>
+        <Item><StatTile label={t('student.bestWorst')} value={`${best.toFixed(0)}% / ${worst.toFixed(0)}%`} /></Item>
+      </Stagger>
 
-      <div className="card">
+      <div className="card" style={{ marginBottom: 16 }}>
         <h3>{t('student.monthlyChart')}</h3>
         <div className="chart-wrap">
           <LineChart points={monthlyPoints.map((p) => ({ label: p.label, value: p.value }))} />
         </div>
       </div>
+
+      {monthlyPoints.length > 0 && (
+        <div className="card">
+          <h3>{t('student.monthlyBreakdown')}</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 12 }}>
+            {monthlyPoints.map((p) => (
+              <ProgressBar key={p.label} value={p.value} label={p.label} showValue ticks />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

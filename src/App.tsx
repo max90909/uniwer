@@ -1,7 +1,9 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useSession } from './lib/session';
 import { Login } from './pages/Login';
+import { Welcome } from './pages/Welcome';
 import { Layout } from './components/Layout';
+import { ShellTransition } from './components/PageTransition';
 
 import StudentDashboard from './pages/student/Dashboard';
 import StudentMaterials from './pages/student/Materials';
@@ -28,7 +30,7 @@ import AdminRankings from './pages/admin/Rankings';
 
 function RoleGate({ role, children }: { role: 'student' | 'teacher' | 'admin'; children: React.ReactNode }) {
   const { user } = useSession();
-  if (!user) return <Navigate to="/" replace />;
+  if (!user) return <Navigate to="/login" replace />;
   if (user.role !== role) return <Navigate to={`/${user.role}`} replace />;
   return <>{children}</>;
 }
@@ -36,13 +38,30 @@ function RoleGate({ role, children }: { role: 'student' | 'teacher' | 'admin'; c
 function Root() {
   const { user } = useSession();
   if (user) return <Navigate to={`/${user.role}`} replace />;
-  return <Login />;
+  return (
+    <ShellTransition>
+      <Welcome />
+    </ShellTransition>
+  );
+}
+
+function LoginGate() {
+  const { user } = useSession();
+  if (user) return <Navigate to={`/${user.role}`} replace />;
+  return (
+    <ShellTransition>
+      <Login />
+    </ShellTransition>
+  );
 }
 
 export default function App() {
+  // Each shell animates itself in on mount (<ShellTransition> / <Layout>). Page
+  // swaps *within* a role are animated in <Layout>, where the sidebar survives.
   return (
     <Routes>
       <Route path="/" element={<Root />} />
+      <Route path="/login" element={<LoginGate />} />
 
       <Route
         path="/student"
