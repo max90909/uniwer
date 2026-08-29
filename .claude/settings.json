@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(sed -i \"s|localhost:5173|localhost:5175|g\" sweep.mjs)",
-      "Bash(node sweep.mjs)"
-    ]
-  }
-}

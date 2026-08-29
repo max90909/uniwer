@@ -2,3 +2,6 @@ node_modules
 dist
 .env
 .DS_Store
+
+# Локальные настройки Claude Code — к проекту не относятся
+.claude/
