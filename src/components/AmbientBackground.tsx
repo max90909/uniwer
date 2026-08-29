@@ -1,34 +1,63 @@
-import { motion } from 'framer-motion';
+import { useMemo } from 'react';
 import { prefersReducedMotion } from '../lib/useAnimatedNumber';
 
+/** Сколько капель рисуем. Больше — плотнее дождь и дороже отрисовка. */
+const DROPS = 34;
+
 /**
- * Фоновое движение для страниц входа и приветствия.
+ * Минималистичный дождь на заднем плане.
  *
- * Три очень бледных пятна медленно дрейфуют и тонкая сетка поверх них. Смысл —
- * оживить пустой фон, не отвлекая от текста: контраст пятен около 3–4%, период
- * движения 18–26 секунд, поэтому глаз замечает их только боковым зрением.
- * Слой не ловит указатель и полностью выключается при prefers-reduced-motion.
+ * Каждая капля — тонкая полоска, падающая сверху вниз по бесконечной CSS-анимации.
+ * Позиция, длина, скорость и задержка у всех разные, поэтому повторяемость не
+ * читается. Анимируется только `transform`, так что браузер обходится
+ * композитингом и не пересчитывает раскладку.
+ *
+ * Слой очень бледный (капли ~6–14% непрозрачности) и не ловит указатель, чтобы
+ * не мешать чтению. При `prefers-reduced-motion` дождь не рисуется вовсе.
  */
 export function AmbientBackground() {
   const still = prefersReducedMotion();
 
-  const blobs = [
-    { className: 'blob blob-a', x: [0, 40, -20, 0], y: [0, -30, 20, 0], d: 26 },
-    { className: 'blob blob-b', x: [0, -35, 25, 0], y: [0, 25, -20, 0], d: 22 },
-    { className: 'blob blob-c', x: [0, 25, -30, 0], y: [0, 20, 30, 0], d: 30 },
-  ];
+  // Раскладка постоянна на всё время жизни компонента: пересчёт на каждый
+  // рендер дёргал бы капли в новые места.
+  const drops = useMemo(
+    () =>
+      Array.from({ length: DROPS }, (_, i) => {
+        // Простое детерминированное псевдослучайное — одинаковая картина при
+        // каждом заходе, без зависимости от Math.random.
+        const r = (n: number) => ((Math.sin(i * 12.9898 + n * 78.233) * 43758.5453) % 1 + 1) % 1;
+        const duration = 3.4 + r(3) * 3.6;
+        return {
+          left: r(1) * 100,
+          // Отрицательная задержка = анимация начинается с середины, поэтому
+          // капли распределены по высоте с первого кадра. С положительной
+          // экран первые секунды оставался пустым, а потом всё сыпалось разом.
+          delay: -r(2) * duration,
+          duration,
+          height: 42 + r(4) * 68,
+          opacity: 0.06 + r(5) * 0.08,
+        };
+      }),
+    []
+  );
+
+  if (still) return null;
 
   return (
-    <div className="ambient" aria-hidden="true">
-      {blobs.map((b) => (
-        <motion.span
-          key={b.className}
-          className={b.className}
-          animate={still ? undefined : { x: b.x, y: b.y }}
-          transition={{ duration: b.d, repeat: Infinity, ease: 'easeInOut' }}
+    <div className="rain" aria-hidden="true">
+      {drops.map((d, i) => (
+        <span
+          key={i}
+          className="drop"
+          style={{
+            left: `${d.left}%`,
+            height: `${d.height}px`,
+            opacity: d.opacity,
+            animationDelay: `${d.delay}s`,
+            animationDuration: `${d.duration}s`,
+          }}
         />
       ))}
-      <span className="ambient-grid" />
     </div>
   );
 }

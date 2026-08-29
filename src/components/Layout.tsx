@@ -6,6 +6,7 @@ import { useI18n } from '../i18n';
 import { LANG_LABEL, type Lang } from '../i18n/translations';
 import { PageTransition } from './PageTransition';
 import { MOBILE_QUERY, useMediaQuery } from '../lib/useMediaQuery';
+import { AmbientBackground } from './AmbientBackground';
 
 interface NavItem {
   to: string;
@@ -170,6 +171,8 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
     >
+      <AmbientBackground />
+
       {isMobile && (
         <header className="app-topbar">
           <button
@@ -196,7 +199,7 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
           >
             {collapsed ? '›' : '‹'}
           </button>
-          {renderSidebar(collapsed)}
+          <div className="sidebar-scroll">{renderSidebar(collapsed)}</div>
         </nav>
       )}
 
@@ -218,7 +221,7 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', stiffness: 360, damping: 38 }}
             >
-              {renderSidebar(false)}
+              <div className="sidebar-scroll">{renderSidebar(false)}</div>
             </motion.nav>
           </>
         )}

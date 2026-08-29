@@ -1,33 +1,33 @@
-/* Ведомость — деловая тема.
-   Раньше здесь был неоморфизм: поверхность совпадала с фоном, а объём давала
-   пара мягких теней. Выглядело мягко и «игрушечно», поэтому оформление
-   переведено на обычную для рабочих панелей систему: белая (в тёмной теме —
-   приподнятая) карточка, тонкая граница и сдержанная тень. Акцент один —
-   фирменный бордовый, он остаётся только на действиях и ключевых числах. */
+/* Ведомость — неоморфизм (soft UI).
+   Поверхность совпадает с фоном, объём даёт пара теней: светлая сверху-слева и
+   тёмная снизу-справа. Нажатые состояния — те же тени, вывернутые внутрь.
+   Границ почти нет, поэтому акцент отвечает за различимость действий: он
+   остаётся только на кнопках и ключевых числах.
+   Тёмная тема намеренно холодная: тёплая подложка в паре со светлой тенью
+   давала бурый, «смуглый» налёт. */
 
 :root {
-  --bg: #f1f4f8;
-  --surface: #ffffff;
-  --surface-2: #f6f8fb;
-  --ink: #171d29;
-  --muted: #5a6478;
-  --faint: #8b95a8;
-  --line: #e0e5ee;
-  --line-strong: #cdd5e2;
+  --bg: #e9edf4;
+  --surface: #e9edf4;
+  --surface-2: #e0e5ee;
+  --ink: #212836;
+  --muted: #5c657a;
+  --faint: #8892a4;
+  --line: #d5dbe6;
 
   --accent: #9f2b3e;
   --accent-strong: #82202f;
-  --accent-soft: #fbeaed;
+  --accent-soft: #f6e3e7;
   --on-accent: #ffffff;
 
   --positive: #2c7a58;
-  --positive-soft: #e2f2ea;
+  --positive-soft: #dcece4;
   --good: #256e7f;
-  --good-soft: #e0eff3;
+  --good-soft: #daeaef;
   --warning: #96651a;
-  --warning-soft: #f7ecd8;
+  --warning-soft: #f2e7d4;
   --negative: #9f2b3e;
-  --negative-soft: #fbeaed;
+  --negative-soft: #f6e3e7;
 
   --accent-lift: #cc5a72;
   --positive-lift: #55ab86;
@@ -35,44 +35,42 @@
   --warning-lift: #cd9a45;
   --negative-lift: #cc5a72;
 
-  --radius: 14px;
-  --radius-sm: 10px;
+  --shadow-light: #ffffff;
+  --shadow-dark: #bcc5d4;
+  --radius: 18px;
+  --radius-sm: 12px;
 
-  /* Три ступени высоты вместо неоморфных пар теней. */
-  --elev-1: 0 1px 2px rgba(19, 26, 40, 0.05), 0 1px 3px rgba(19, 26, 40, 0.04);
-  --elev-2: 0 1px 2px rgba(19, 26, 40, 0.05), 0 4px 14px -4px rgba(19, 26, 40, 0.10);
-  --elev-3: 0 8px 32px -8px rgba(19, 26, 40, 0.20);
-  --inset: inset 0 1px 2px rgba(19, 26, 40, 0.06);
-  --ring: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  --nm-raised: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+  --nm-raised-sm: 3px 3px 7px var(--shadow-dark), -3px -3px 7px var(--shadow-light);
+  --nm-raised-lg: 10px 10px 24px var(--shadow-dark), -10px -10px 24px var(--shadow-light);
+  --nm-pressed: inset 4px 4px 9px var(--shadow-dark), inset -4px -4px 9px var(--shadow-light);
+  --nm-pressed-sm: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  --ring: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
-/* Тёмная тема: холодный сине-серый, а не бурый. Прошлый вариант выглядел
-   «смуглым» из-за тёплой подложки #262b36 и пыльно-розового акцента — фон
-   уведён в синеву, акцент очищен, границы стали различимыми. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #0d1118;
-    --surface: #151a23;
-    --surface-2: #1b212c;
-    --ink: #e9edf4;
+    --bg: #1b202a;
+    --surface: #1b202a;
+    --surface-2: #212734;
+    --ink: #e7ebf3;
     --muted: #9aa4b6;
-    --faint: #6c7688;
-    --line: #262d3a;
-    --line-strong: #333c4c;
+    --faint: #6f7a8d;
+    --line: #2b3240;
 
     --accent: #f0718a;
     --accent-strong: #ff8ba0;
-    --accent-soft: #2e1a20;
-    --on-accent: #14181f;
+    --accent-soft: #332127;
+    --on-accent: #171b23;
 
     --positive: #5cc191;
-    --positive-soft: #14291f;
+    --positive-soft: #1a2c23;
     --good: #58b2cc;
-    --good-soft: #12262d;
+    --good-soft: #172831;
     --warning: #e2b568;
-    --warning-soft: #2c2415;
+    --warning-soft: #2f2718;
     --negative: #f0718a;
-    --negative-soft: #2e1a20;
+    --negative-soft: #332127;
 
     --accent-lift: #b8556a;
     --positive-lift: #429269;
@@ -80,35 +78,32 @@
     --warning-lift: #a9854a;
     --negative-lift: #b8556a;
 
-    --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --elev-2: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px -4px rgba(0, 0, 0, 0.5);
-    --elev-3: 0 10px 36px -10px rgba(0, 0, 0, 0.7);
-    --inset: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow-light: #242b37;
+    --shadow-dark: #10141b;
   }
 }
 :root[data-theme='dark'] {
-  --bg: #0d1118;
-  --surface: #151a23;
-  --surface-2: #1b212c;
-  --ink: #e9edf4;
+  --bg: #1b202a;
+  --surface: #1b202a;
+  --surface-2: #212734;
+  --ink: #e7ebf3;
   --muted: #9aa4b6;
-  --faint: #6c7688;
-  --line: #262d3a;
-  --line-strong: #333c4c;
+  --faint: #6f7a8d;
+  --line: #2b3240;
 
   --accent: #f0718a;
   --accent-strong: #ff8ba0;
-  --accent-soft: #2e1a20;
-  --on-accent: #14181f;
+  --accent-soft: #332127;
+  --on-accent: #171b23;
 
   --positive: #5cc191;
-  --positive-soft: #14291f;
+  --positive-soft: #1a2c23;
   --good: #58b2cc;
-  --good-soft: #12262d;
+  --good-soft: #172831;
   --warning: #e2b568;
-  --warning-soft: #2c2415;
+  --warning-soft: #2f2718;
   --negative: #f0718a;
-  --negative-soft: #2e1a20;
+  --negative-soft: #332127;
 
   --accent-lift: #b8556a;
   --positive-lift: #429269;
@@ -116,10 +111,8 @@
   --warning-lift: #a9854a;
   --negative-lift: #b8556a;
 
-  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --elev-2: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px -4px rgba(0, 0, 0, 0.5);
-  --elev-3: 0 10px 36px -10px rgba(0, 0, 0, 0.7);
-  --inset: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-light: #242b37;
+  --shadow-dark: #10141b;
 }
 
 * { box-sizing: border-box; }
@@ -149,12 +142,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+/* У пунктов меню и языковых кнопок своя подсветка фокуса: сплошная рамка
+   вплотную к пилюле читалась как рамка ошибки. */
+.nav-link:focus-visible, .lang-pill:focus-visible, .rail-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
 @media (prefers-reduced-motion: no-preference) {
   .btn, .nav-link, .card, .lang-pill, .badge, .input, select.input, textarea.input,
   .chart-dot, .radial-fill, tbody tr, .welcome-feature {
     transition: box-shadow .18s ease, color .18s ease, transform .18s cubic-bezier(.16,1,.3,1), background .18s ease, border-color .18s ease;
   }
-  .card:hover { transform: translateY(-2px); box-shadow: var(--elev-3); }
+  .card:hover { transform: translateY(-2px); box-shadow: var(--nm-raised-lg); }
   .btn:hover { transform: translateY(-1px); }
   .btn:active { transform: translateY(0); }
 
@@ -185,29 +184,37 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .app-shell { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
 
 .app-sidebar {
-  position: relative;
+  position: sticky;
+  top: 0;
+  height: 100vh;
   background: var(--surface);
   padding: 26px 18px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;
-  border-right: 1px solid var(--line);
+  /* Прокрутка живёт во внутреннем блоке: на самом сайдбаре overflow создавал
+     область отсечения и срезал кнопку сворачивания, которая выступает за край. */
+  overflow: visible;
+  box-shadow: 8px 0 22px -18px var(--shadow-dark);
 }
+.sidebar-scroll {
+  flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column; gap: 4px;
+  /* место для тени соседних элементов, иначе она обрезается при прокрутке */
+  padding: 2px;
+  margin: -2px;
+}
+.app-drawer .sidebar-scroll { gap: 4px; }
 
 /* Шапка с бургером — только на узких экранах; на десктопе её место занимает
    постоянный сайдбар. */
 .app-topbar { display: none; }
 .burger {
-  border: 1px solid var(--line-strong); background: var(--surface); box-shadow: var(--elev-1);
+  border: none; background: var(--surface); box-shadow: var(--nm-raised-sm);
   border-radius: 11px; width: 42px; height: 42px; flex-shrink: 0; cursor: pointer;
   display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
 }
 .burger span { display: block; width: 17px; height: 2px; border-radius: 2px; background: var(--ink); }
-.burger:active { box-shadow: var(--inset); }
+.burger:active { box-shadow: var(--nm-pressed-sm); }
 .topbar-title {
   flex: 1; min-width: 0; font-family: 'Manrope', 'Inter', sans-serif; font-weight: 700;
   font-size: 1.02rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -238,13 +245,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 /* ---------- свёрнутый сайдбар ---------- */
 .app-shell:has(.app-sidebar.collapsed) { grid-template-columns: 76px 1fr; }
 .rail-toggle {
-  position: absolute; top: 22px; right: -11px; z-index: 5;
-  width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
-  border: 1px solid var(--line-strong); background: var(--surface); color: var(--muted);
+  position: absolute; top: 26px; right: -13px; z-index: 6;
+  width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
+  border: none; background: var(--surface); color: var(--muted);
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: 0.8rem; line-height: 1; box-shadow: var(--elev-1);
+  font-size: 0.85rem; font-weight: 700; line-height: 1;
+  box-shadow: var(--nm-raised-sm);
 }
-.rail-toggle:hover { color: var(--accent-strong); border-color: var(--accent); }
+.rail-toggle:hover { color: var(--accent-strong); }
+.rail-toggle:active { box-shadow: var(--nm-pressed-sm); }
 
 .app-sidebar.collapsed { padding: 26px 12px; align-items: center; }
 .app-sidebar.collapsed .brand { align-items: center; padding: 4px 0 14px; }
@@ -270,24 +279,24 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .brand .role-tag,
 .role-tag { font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--faint); }
 
-.lang-switch { display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); }
+.lang-switch { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; box-shadow: var(--nm-pressed-sm); }
 .lang-pill {
   position: relative; border: none; background: transparent; cursor: pointer; color: var(--muted);
   font-size: 0.68rem; font-weight: 700; letter-spacing: 0.03em; padding: 5px 10px; border-radius: 999px;
 }
 .lang-pill-bg {
   position: absolute; inset: 0; border-radius: 999px; z-index: 0;
-  background: var(--surface); box-shadow: var(--elev-1); border: 1px solid var(--line);
+  background: var(--surface); box-shadow: var(--nm-raised-sm);
 }
 .lang-pill-text { position: relative; z-index: 1; }
 .lang-pill.active { color: var(--accent-strong); }
 
 /* `subtle` — язык меняют один раз, поэтому по умолчанию переключатель почти не
    виден и проявляется при наведении или фокусе с клавиатуры. */
-.lang-switch.subtle { background: transparent; border-color: transparent; opacity: 0.6; }
+.lang-switch.subtle { box-shadow: none; opacity: 0.6; }
 .lang-switch.subtle:hover, .lang-switch.subtle:focus-within { opacity: 1; }
 .lang-switch.subtle .lang-pill { font-size: 0.63rem; padding: 4px 8px; }
-.lang-switch.subtle .lang-pill-bg { background: var(--surface); box-shadow: var(--elev-1); }
+.lang-switch.subtle .lang-pill-bg { background: var(--surface); box-shadow: var(--nm-raised-sm); }
 @media (prefers-reduced-motion: no-preference) { .lang-switch.subtle { transition: opacity .2s ease; } }
 
 .nav-list { display: flex; flex-direction: column; }
@@ -299,7 +308,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 .nav-active-bg {
   position: absolute; inset: 0; border-radius: var(--radius-sm); z-index: 0;
-  background: var(--accent-soft);
+  background: var(--surface); box-shadow: var(--nm-pressed-sm);
 }
 .nav-icon, .nav-text { position: relative; z-index: 1; }
 .nav-icon { width: 18px; text-align: center; font-size: 0.9rem; opacity: 0.75; }
@@ -320,7 +329,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .avatar {
   flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--accent-soft); border: 1px solid var(--line);
+  background: var(--surface); box-shadow: var(--nm-raised-sm);
   font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em; color: var(--accent-strong);
 }
 
@@ -341,9 +350,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 .card {
   background: var(--surface);
-  border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: var(--elev-2);
+  box-shadow: var(--nm-raised);
   padding: 20px 22px;
 }
 .card h3 { font-size: 1rem; margin-bottom: 10px; }
@@ -367,8 +375,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .meter-value.negative { color: var(--negative); }
 
 .progress-bar {
-  position: relative; height: 10px; border-radius: 999px;
-  background: var(--surface-2); border: 1px solid var(--line);
+  position: relative; height: 11px; border-radius: 999px;
+  background: var(--surface); box-shadow: var(--nm-pressed-sm);
 }
 .progress-fill {
   position: absolute; inset: 0 auto 0 0; display: block; height: 100%;
@@ -401,12 +409,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .badge.accent { background: var(--accent-soft); color: var(--accent); }
 .badge.negative { background: var(--negative-soft); color: var(--negative); }
 .badge.warning { background: var(--warning-soft); color: var(--warning); }
-.badge.neutral { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.badge.neutral { background: var(--surface); color: var(--muted); box-shadow: var(--nm-pressed-sm); }
 
-.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--elev-2); }
+.table-wrap { overflow-x: auto; border-radius: var(--radius); background: var(--surface); box-shadow: var(--nm-raised); padding: 4px; }
 table { border-collapse: collapse; width: 100%; min-width: 480px; font-size: 0.88rem; }
 thead th {
-  text-align: left; border-bottom: 1px solid var(--line); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
+  text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--faint); padding: 12px 16px 10px; white-space: nowrap; position: sticky; top: 0; background: var(--surface);
 }
 tbody td { padding: 9px 16px; border-top: 1px solid var(--line); vertical-align: middle; }
@@ -417,25 +425,25 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .btn {
   display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
   border-radius: var(--radius-sm); padding: 9px 16px; font-size: 0.86rem; font-weight: 600;
-  border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
-  box-shadow: var(--elev-1);
+  border: none; background: var(--surface); color: var(--ink);
+  box-shadow: var(--nm-raised-sm);
 }
-.btn:hover { color: var(--accent-strong); border-color: var(--accent); }
-.btn:active { box-shadow: var(--inset); }
-.btn.btn-selected { color: var(--accent-strong); border-color: var(--accent); background: var(--accent-soft); }
-.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); box-shadow: var(--elev-1); }
+.btn:hover { color: var(--accent-strong); }
+.btn:active { box-shadow: var(--nm-pressed-sm); }
+.btn.btn-selected { color: var(--accent-strong); box-shadow: var(--nm-pressed-sm); }
+.btn.primary { background: var(--accent); color: var(--on-accent); box-shadow: 4px 4px 10px var(--shadow-dark); }
 .btn.primary:hover { background: var(--accent-strong); color: var(--on-accent); }
 .btn.primary:active { box-shadow: inset 3px 3px 7px rgba(0,0,0,0.25); }
-.btn.ghost { box-shadow: none; background: transparent; border-color: transparent; }
-.btn.ghost:hover { border-color: var(--line-strong); background: var(--surface-2); }
+.btn.ghost { box-shadow: none; background: transparent; }
+.btn.ghost:hover { box-shadow: var(--nm-raised-sm); }
 
 .input, select.input, textarea.input {
-  border: 1px solid var(--line-strong); border-radius: var(--radius-sm); padding: 9px 12px;
-  background: var(--surface-2); color: var(--ink);
-  width: 100%; box-shadow: var(--inset); font-family: inherit; resize: vertical;
+  border: none; border-radius: var(--radius-sm); padding: 10px 13px;
+  background: var(--surface); color: var(--ink);
+  width: 100%; box-shadow: var(--nm-pressed-sm); font-family: inherit; resize: vertical;
 }
 .input:focus, select.input:focus, textarea.input:focus {
-  outline: none; border-color: var(--accent); background: var(--surface); box-shadow: var(--ring);
+  outline: none; box-shadow: var(--nm-pressed-sm), var(--ring);
 }
 .score-input { width: 68px; text-align: center; font-variant-numeric: tabular-nums; }
 
@@ -449,7 +457,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   min-height: 100vh; display: grid; grid-template-columns: minmax(0, 46%) 1fr; background: var(--bg);
 }
 .auth-brand {
-  background: var(--surface-2); box-shadow: var(--inset);
+  background: var(--surface-2); box-shadow: var(--nm-pressed-sm);
   padding: 48px 5vw; display: flex; align-items: center; justify-content: flex-end;
   background-image: radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 60%);
 }
@@ -504,7 +512,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .gauge { display: inline-flex; flex-direction: column; align-items: center; flex-shrink: 0; }
 .gauge-ring { position: relative; display: inline-flex; align-items: center; justify-content: center; }
 .gauge svg { overflow: visible; }
-.gauge-track { fill: none; stroke: var(--line); }
+.gauge-track { fill: none; stroke: var(--surface-2); }
 .gauge-fill { fill: none; }
 .gauge-marker { stroke: var(--surface); stroke-width: 3; }
 .gauge-tick { stroke: var(--line); stroke-width: 2; stroke-linecap: round; }
@@ -543,7 +551,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 /* ---------- radial (compact ring) ---------- */
 .radial { position: relative; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .radial svg { display: block; }
-.radial-track { fill: none; stroke: var(--line); }
+.radial-track { fill: none; stroke: var(--surface-2); }
 .radial-fill { fill: none; }
 .radial-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
 .radial-value { font-family: 'Manrope', 'Inter', sans-serif; font-weight: 600; color: var(--ink); line-height: 1; }
@@ -601,7 +609,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .welcome-hero-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
 .welcome-badge {
   display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px;
-  background: var(--surface); box-shadow: var(--elev-1); font-size: 0.72rem; font-weight: 700;
+  background: var(--surface); box-shadow: var(--nm-raised-sm); font-size: 0.72rem; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-strong);
 }
 .welcome-hero h1 { font-size: clamp(1.9rem, 4.4vw, 3rem); max-width: 18ch; line-height: 1.12; }
@@ -624,12 +632,12 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 @media (max-width: 860px) { .welcome-features { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .welcome-features { grid-template-columns: 1fr; } }
 .welcome-feature {
-  height: 100%; background: var(--surface); border-radius: var(--radius); box-shadow: var(--elev-2);
+  height: 100%; background: var(--surface); border-radius: var(--radius); box-shadow: var(--nm-raised);
   padding: 22px 20px; display: flex; flex-direction: column; gap: 8px;
 }
 .welcome-feature .icon {
   width: 42px; height: 42px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;
-  background: var(--surface); box-shadow: var(--inset); font-size: 1.2rem;
+  background: var(--surface); box-shadow: var(--nm-pressed-sm); font-size: 1.2rem;
 }
 .welcome-feature h3 { font-size: 0.98rem; }
 .welcome-feature p { margin: 0; color: var(--muted); font-size: 0.86rem; }
@@ -663,45 +671,62 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* ---------- реакция формы входа ---------- */
 .auth-progress {
-  height: 3px; border-radius: 999px; background: var(--line); overflow: hidden; margin: 2px 0 4px;
+  height: 6px; border-radius: 999px; box-shadow: var(--nm-pressed-sm); overflow: hidden; margin: 2px 0 4px;
 }
 .auth-progress-fill {
   display: block; height: 100%; width: 0; border-radius: 999px;
   background: linear-gradient(90deg, var(--accent-lift), var(--accent));
+  box-shadow: 0 0 10px -2px var(--accent);
 }
-.auth-submit { position: relative; }
-.submit-spark { font-size: 0.95rem; line-height: 1; }
+.auth-submit { position: relative; overflow: hidden; }
+/* Когда оба поля заполнены, по кнопке идёт блик — видно, что можно нажимать.
+   Раньше на это же указывала эмодзи, но она спорила с общим оформлением. */
+.auth-submit::before {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 45%; z-index: 0;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.38), transparent);
+  transform: translateX(-160%);
+}
 @media (prefers-reduced-motion: no-preference) {
-  .auth-submit.ready { box-shadow: var(--elev-2), 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+  @keyframes submitSheen {
+    0% { transform: translateX(-160%); }
+    60%, 100% { transform: translateX(320%); }
+  }
+  .auth-submit.ready::before { animation: submitSheen 1.9s cubic-bezier(.4,0,.2,1) infinite; }
+  .auth-submit.ready { box-shadow: 4px 4px 10px var(--shadow-dark), var(--ring); }
   .auth-submit { transition: box-shadow .3s ease; }
 }
 
-/* ---------- фоновое движение ---------- */
-.ambient { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-.ambient .blob {
-  position: absolute; display: block; border-radius: 50%;
-  filter: blur(90px); opacity: 0.11;
+/* ---------- фоновое движение: дождь ---------- */
+.rain { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.drop {
+  position: absolute; top: 0; display: block; width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--ink));
+  border-radius: 1px;
+  /* Стартуем выше экрана, чтобы капля входила в кадр уже на ходу. */
+  animation-name: rainFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
 }
-.blob-a { width: 42vw; height: 42vw; left: -8vw; top: -10vw; background: var(--accent); }
-.blob-b { width: 34vw; height: 34vw; right: -6vw; top: 18vh; background: var(--good); }
-.blob-c { width: 30vw; height: 30vw; left: 26vw; bottom: -12vw; background: var(--positive); }
-:root[data-theme='dark'] .ambient .blob { opacity: 0.10; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .ambient .blob { opacity: 0.10; } }
+@keyframes rainFall {
+  from { transform: translate3d(0, -20vh, 0); }
+  to   { transform: translate3d(0, 120vh, 0); }
+}
+/* На тёмной теме капли светлее фона, поэтому им нужно чуть больше плотности. */
+:root[data-theme='dark'] .drop,
+:root:not([data-theme='light']) .drop { filter: brightness(1.6); }
 
-/* Тонкая сетка поверх пятен — она даёт «инженерный», а не декоративный вид. */
-.ambient-grid {
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(to right, color-mix(in srgb, var(--ink) 4%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 4%, transparent) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 40%, transparent 100%);
-}
 /* Содержимое страниц лежит выше фонового слоя. Сам слой исключён: иначе
    position: relative отменяет ему fixed, и он встаёт в поток как ячейка грида,
    разваливая разметку страницы. */
-.auth > *:not(.ambient),
-.welcome-shell > *:not(.ambient) { position: relative; z-index: 1; }
+.auth > *:not(.rain),
+.welcome-shell > *:not(.rain),
+.app-shell > *:not(.rain) { position: relative; z-index: 1; }
+/* Сайдбар выше основной колонки: кнопка сворачивания выступает за его край, и
+   при равном z-index <main> накрывал её половину и забирал клик себе. */
+.app-shell > .app-sidebar { z-index: 3; }
+
+@media (prefers-reduced-motion: reduce) { .rain { display: none; } }
 
 /* ---------- микроанимации кнопок ---------- */
 /* У каждого типа действия своя реакция, чтобы нажатие ощущалось по-разному:
@@ -731,10 +756,10 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .file-list { display: flex; flex-direction: column; gap: 8px; }
 .file-row {
   display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;
-  padding: 10px 13px; border: 1px solid var(--line); border-radius: var(--radius-sm);
-  background: var(--surface-2);
+  padding: 11px 14px; border-radius: var(--radius-sm);
+  background: var(--surface); box-shadow: var(--nm-raised-sm);
 }
-.file-row:hover { border-color: var(--accent); background: var(--surface); box-shadow: var(--elev-1); }
+.file-row:hover { box-shadow: var(--nm-pressed-sm); color: var(--accent-strong); }
 .file-icon { font-size: 1.1rem; flex-shrink: 0; line-height: 1; }
 .file-name { flex: 1; min-width: 0; font-size: 0.88rem; font-weight: 500; overflow-wrap: anywhere; }
 .file-action { flex-shrink: 0; font-size: 0.78rem; font-weight: 600; color: var(--accent); }

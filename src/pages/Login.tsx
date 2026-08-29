@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useSession } from '../lib/session';
 import { useI18n } from '../i18n';
 import { LanguageSwitcher } from '../components/Layout';
@@ -148,22 +148,7 @@ export function Login() {
           )}
 
           <button type="submit" className={`btn primary lg auth-submit${ready ? ' ready' : ''}`}>
-            <span>{t('login.submit')}</span>
-            {/* Единственная эмодзи в интерфейсе: короткая отметка, что форма
-                заполнена и можно нажимать. Появляется один раз и не мигает. */}
-            <AnimatePresence>
-              {ready && (
-                <motion.span
-                  className="submit-spark"
-                  initial={{ opacity: 0, scale: 0.5, rotate: -25 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  exit={{ opacity: 0, scale: 0.5 }}
-                  transition={{ type: 'spring', stiffness: 460, damping: 18 }}
-                >
-                  🔑
-                </motion.span>
-              )}
-            </AnimatePresence>
+            {t('login.submit')}
           </button>
 
           <details className="auth-hint">
