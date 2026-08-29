@@ -15,7 +15,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <I18nProvider>
       <StoreProvider>
         <SessionProvider>
-          <BrowserRouter>
+          {/* Сайт живёт не в корне домена, а по адресу /<репозиторий>/. Без
+              basename роутер считал бы «/uniwer/login» отдельным адресом, не
+              находил бы маршрут и уходил на catch-all: страница сваливалась в
+              корень домена, а обновление внутренней страницы ломалось.
+              BASE_URL подставляет Vite — в разработке это «/». */}
+          <BrowserRouter basename={import.meta.env.BASE_URL}>
             <App />
           </BrowserRouter>
         </SessionProvider>

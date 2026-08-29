@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:site": "node scripts/publish.mjs"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",

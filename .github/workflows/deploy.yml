@@ -1,8 +1,17 @@
-name: Deploy demo to GitHub Pages
+# Автоматическая сборка ОТКЛЮЧЕНА: сайт публикуется вручную.
+#
+# Порядок сейчас такой — вы собираете сайт локально (`npm run build:site`),
+# коммитите папку `docs/` и пушите; GitHub Pages настроен отдавать эту папку.
+# Так сайт обновляется ровно тогда, когда вы этого захотели.
+#
+# Этот workflow оставлен как запасной вариант и сам по себе не запускается —
+# только вручную, кнопкой «Run workflow». Учтите: он работает лишь если в
+# Settings → Pages источником выбран «GitHub Actions». При источнике
+# «Deploy from a branch» (папка /docs) запуск завершится ошибкой — это
+# ожидаемо, просто не запускайте его.
+name: Deploy demo to GitHub Pages (вручную)
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -26,10 +35,12 @@ jobs:
 
       - run: npm ci
 
-      # Project pages (username.github.io/<repo>) need Vite's `base` set to
-      # the repo name, so asset URLs resolve correctly. If you rename the
-      # repo, this stays correct automatically.
       - run: npm run build -- --base=/${{ github.event.repository.name }}/
+
+      # Pages не умеет перезаписывать пути, поэтому прямой заход на /login
+      # вернул бы 404. Копия index.html под именем 404.html отдаёт то же
+      # приложение, а react-router разбирает адрес на клиенте.
+      - run: cp dist/index.html dist/404.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
