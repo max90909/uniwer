@@ -247,6 +247,11 @@ const ru: Dict = {
 
   'common.signOut': 'Выйти',
   'common.openMenu': 'Открыть меню',
+  'common.collapseMenu': 'Свернуть меню',
+  'common.expandMenu': 'Развернуть меню',
+  'materials.sharedTitle': 'Файлы от преподавателя',
+  'materials.sharedSub': 'Материалы, выложенные вручную — доступны всем группам.',
+  'materials.sharedEmpty': 'Файлов пока нет',
 
   'login.brandLede': 'Оценки, посещаемость и рейтинги группы — в одном месте.',
   'login.point1': 'Прогресс по месяцам и темам',
@@ -512,6 +517,11 @@ const en: Dict = {
 
   'common.signOut': 'Sign out',
   'common.openMenu': 'Open menu',
+  'common.collapseMenu': 'Collapse menu',
+  'common.expandMenu': 'Expand menu',
+  'materials.sharedTitle': 'Files from the teacher',
+  'materials.sharedSub': 'Manually uploaded materials — available to every group.',
+  'materials.sharedEmpty': 'No files yet',
 
   'login.brandLede': 'Grades, attendance and rankings for your group — in one place.',
   'login.point1': 'Progress by month and topic',
@@ -777,6 +787,11 @@ const tk: Dict = {
 
   'common.signOut': 'Çykmak',
   'common.openMenu': 'Menýuny aç',
+  'common.collapseMenu': 'Menýuny ýygna',
+  'common.expandMenu': 'Menýuny aç',
+  'materials.sharedTitle': 'Mugallymdan faýllar',
+  'materials.sharedSub': 'El bilen ýüklenen materiallar — ähli toparlar üçin elýeterli.',
+  'materials.sharedEmpty': 'Entek faýl ýok',
 
   'login.brandLede': 'Toparyň bahalary, gatnaşygy we reýtingleri — bir ýerde.',
   'login.point1': 'Aýlar we temalar boýunça ösüş',

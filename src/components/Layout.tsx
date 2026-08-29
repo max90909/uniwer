@@ -13,6 +13,8 @@ interface NavItem {
   icon: string;
 }
 
+const RAIL_KEY = 'vedomost-sidebar-collapsed';
+
 const NAV: Record<'student' | 'teacher' | 'admin', NavItem[]> = {
   student: [
     { to: '/student', key: 'nav.home', icon: '◈' },
@@ -80,6 +82,10 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
 
   const isMobile = useMediaQuery(MOBILE_QUERY);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Свёрнутое состояние переживает перезагрузку: это осознанный выбор ширины
+  // рабочей области, а не разовое действие.
+  const [collapsed, setCollapsed] = useState(() => localStorage.getItem(RAIL_KEY) === '1');
+  useEffect(() => { localStorage.setItem(RAIL_KEY, collapsed ? '1' : '0'); }, [collapsed]);
 
   // Переход на другую страницу закрывает шторку — иначе она осталась бы поверх
   // только что открытой страницы. То же при возврате на широкий экран.
@@ -104,11 +110,12 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
 
   const title = t(NAV[role].find((i) => i.to === location.pathname)?.key ?? NAV[role][0].key);
 
-  const sidebar = (
+  // `compact` — только для десктопного рельса; в шторке подписи нужны всегда.
+  const renderSidebar = (compact: boolean) => (
     <>
       <div className="brand">
-        <span className="mark">{t('appName')}</span>
-        <span className="role-tag">{t(`role.${role}`)}</span>
+        <span className="mark">{compact ? t('appName').slice(0, 1) : t('appName')}</span>
+        {!compact && <span className="role-tag">{t(`role.${role}`)}</span>}
       </div>
 
       <div className="nav-list">
@@ -118,6 +125,7 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
             to={item.to}
             end={item.to === `/${role}`}
             className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+            title={compact ? t(item.key) : undefined}
           >
             {({ isActive }) => (
               <>
@@ -129,6 +137,8 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
                   />
                 )}
                 <span className="nav-icon" aria-hidden="true">{item.icon}</span>
+                {/* Подпись остаётся в разметке и в свёрнутом виде — её прячет CSS,
+                    поэтому скринридер по-прежнему читает название пункта. */}
                 <span className="nav-text">{t(item.key)}</span>
               </>
             )}
@@ -137,15 +147,18 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
       </div>
 
       <div className="sidebar-footer">
-        <div className="current-user">
+        <div className="current-user" title={compact ? user?.fullName : undefined}>
           <span className="avatar" aria-hidden="true">{initials(user?.fullName ?? '')}</span>
           <span className="current-user-text">
             <span className="name">{user?.fullName}</span>
             <span className="email">{user?.email}</span>
           </span>
         </div>
-        <button className="btn ghost logout-btn" onClick={logout}>{t('common.signOut')}</button>
-        <div className="sidebar-lang"><LanguageSwitcher subtle /></div>
+        <button className="btn ghost logout-btn" onClick={logout} title={compact ? t('common.signOut') : undefined}>
+          <span className="logout-icon" aria-hidden="true"><SignOutIcon /></span>
+          <span className="logout-text">{t('common.signOut')}</span>
+        </button>
+        {!compact && <div className="sidebar-lang"><LanguageSwitcher subtle /></div>}
       </div>
     </>
   );
@@ -172,7 +185,20 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
         </header>
       )}
 
-      {!isMobile && <nav className="app-sidebar">{sidebar}</nav>}
+      {!isMobile && (
+        <nav className={`app-sidebar${collapsed ? ' collapsed' : ''}`}>
+          <button
+            className="rail-toggle"
+            onClick={() => setCollapsed((v) => !v)}
+            aria-label={t(collapsed ? 'common.expandMenu' : 'common.collapseMenu')}
+            aria-expanded={!collapsed}
+            title={t(collapsed ? 'common.expandMenu' : 'common.collapseMenu')}
+          >
+            {collapsed ? '›' : '‹'}
+          </button>
+          {renderSidebar(collapsed)}
+        </nav>
+      )}
 
       <AnimatePresence>
         {isMobile && menuOpen && (
@@ -192,7 +218,7 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', stiffness: 360, damping: 38 }}
             >
-              {sidebar}
+              {renderSidebar(false)}
             </motion.nav>
           </>
         )}
@@ -204,6 +230,18 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
         </AnimatePresence>
       </main>
     </motion.div>
+  );
+}
+
+/* Значок выхода рисуем SVG: глиф ⏻ есть не во всех шрифтах и падал в «тофу». */
+function SignOutIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+         strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M15 17l5-5-5-5" />
+      <path d="M20 12H9" />
+      <path d="M12 20H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6" />
+    </svg>
   );
 }
 

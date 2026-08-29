@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useSession } from '../lib/session';
 import { useI18n } from '../i18n';
 import { LanguageSwitcher } from '../components/Layout';
 import { ACCOUNTS } from '../data/accounts';
 import { Item, Stagger } from '../components/Reveal';
+import { AmbientBackground } from '../components/AmbientBackground';
 
 /** Глаз для показа пароля; перечёркнут, когда пароль уже виден. */
 function EyeIcon({ closed }: { closed: boolean }) {
@@ -44,8 +45,14 @@ export function Login() {
     if (error) setError(false);
   };
 
+  // Заполненность формы: 0 → 1 → 2. Ведёт полоску под заголовком и «готовность»
+  // кнопки, чтобы ввод логина и пароля читался как продвижение по шагам.
+  const filled = (login.trim() ? 1 : 0) + (password ? 1 : 0);
+  const ready = filled === 2;
+
   return (
     <div className="auth">
+      <AmbientBackground />
       <motion.aside
         className="auth-brand"
         initial={{ opacity: 0 }}
@@ -78,6 +85,14 @@ export function Login() {
         >
           <h2>{t('login.formTitle')}</h2>
           <p className="auth-sub">{t('login.formSub')}</p>
+
+          <div className="auth-progress" aria-hidden="true">
+            <motion.span
+              className="auth-progress-fill"
+              animate={{ width: `${(filled / 2) * 100}%` }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            />
+          </div>
 
           <div className="field">
             <label htmlFor="auth-login">{t('login.username')}</label>
@@ -132,7 +147,24 @@ export function Login() {
             </motion.p>
           )}
 
-          <button type="submit" className="btn primary lg auth-submit">{t('login.submit')}</button>
+          <button type="submit" className={`btn primary lg auth-submit${ready ? ' ready' : ''}`}>
+            <span>{t('login.submit')}</span>
+            {/* Единственная эмодзи в интерфейсе: короткая отметка, что форма
+                заполнена и можно нажимать. Появляется один раз и не мигает. */}
+            <AnimatePresence>
+              {ready && (
+                <motion.span
+                  className="submit-spark"
+                  initial={{ opacity: 0, scale: 0.5, rotate: -25 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.5 }}
+                  transition={{ type: 'spring', stiffness: 460, damping: 18 }}
+                >
+                  🔑
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </button>
 
           <details className="auth-hint">
             <summary>{t('login.hintTitle')}</summary>

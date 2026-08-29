@@ -10,6 +10,9 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    /* Типы Vite: без них компилятор не знает про import.meta.glob,
+       которым собирается список файлов из src/materials. */
+    "types": ["vite/client"],
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,

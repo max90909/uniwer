@@ -6,6 +6,9 @@ import { StoreProvider } from './data/store';
 import { SessionProvider } from './lib/session';
 import { I18nProvider } from './i18n';
 import './index.css';
+import { initPointerGlow } from './lib/pointerGlow';
+
+initPointerGlow();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

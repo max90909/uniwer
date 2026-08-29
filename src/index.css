@@ -1,113 +1,125 @@
-/* Ведомость — neumorphic (soft UI) theme.
-   Base surface and background share one hue; depth comes from a light/dark shadow pair
-   instead of borders. Interactive elements get an inset "pressed" shadow for state,
-   and the accent colour is reserved for actions and key numbers so affordance survives
-   the low-contrast look neumorphism is prone to. */
+/* Ведомость — деловая тема.
+   Раньше здесь был неоморфизм: поверхность совпадала с фоном, а объём давала
+   пара мягких теней. Выглядело мягко и «игрушечно», поэтому оформление
+   переведено на обычную для рабочих панелей систему: белая (в тёмной теме —
+   приподнятая) карточка, тонкая граница и сдержанная тень. Акцент один —
+   фирменный бордовый, он остаётся только на действиях и ключевых числах. */
 
 :root {
-  --bg: #e8ecf3;
-  --surface: #e8ecf3;
-  --surface-2: #dee3ec;
-  --ink: #2b3245;
-  --muted: #626b80;
-  --faint: #8891a3;
-  --line: #d3d9e4;
-  --accent: #a63446;
-  --accent-strong: #8a2a39;
-  --accent-soft: #f1dee1;
+  --bg: #f1f4f8;
+  --surface: #ffffff;
+  --surface-2: #f6f8fb;
+  --ink: #171d29;
+  --muted: #5a6478;
+  --faint: #8b95a8;
+  --line: #e0e5ee;
+  --line-strong: #cdd5e2;
+
+  --accent: #9f2b3e;
+  --accent-strong: #82202f;
+  --accent-soft: #fbeaed;
   --on-accent: #ffffff;
-  --positive: #2f7d5c;
-  --positive-soft: #dcefe5;
-  --warning: #9c6b1f;
-  --warning-soft: #f2e6d0;
-  --negative: #a63446;
-  --negative-soft: #f1dee1;
 
-  /* "lift" = the light end of each tone's gradient. Gauges and meters sweep from
-     lift → base, which gives the arc direction without introducing a second hue. */
-  --good: #2f6f7d;
-  --good-soft: #d9eaee;
+  --positive: #2c7a58;
+  --positive-soft: #e2f2ea;
+  --good: #256e7f;
+  --good-soft: #e0eff3;
+  --warning: #96651a;
+  --warning-soft: #f7ecd8;
+  --negative: #9f2b3e;
+  --negative-soft: #fbeaed;
 
-  --accent-lift: #d4677c;
-  --positive-lift: #63b493;
-  --good-lift: #5ea3b2;
-  --warning-lift: #d5a44f;
-  --negative-lift: #d4677c;
+  --accent-lift: #cc5a72;
+  --positive-lift: #55ab86;
+  --good-lift: #4f9db0;
+  --warning-lift: #cd9a45;
+  --negative-lift: #cc5a72;
 
-  --shadow-light: #ffffff;
-  --shadow-dark: #b9c2d2;
-  --radius: 18px;
-  --radius-sm: 12px;
+  --radius: 14px;
+  --radius-sm: 10px;
 
-  --nm-raised: 7px 7px 16px var(--shadow-dark), -7px -7px 16px var(--shadow-light);
-  --nm-raised-sm: 4px 4px 9px var(--shadow-dark), -4px -4px 9px var(--shadow-light);
-  --nm-pressed: inset 4px 4px 9px var(--shadow-dark), inset -4px -4px 9px var(--shadow-light);
-  --nm-pressed-sm: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+  /* Три ступени высоты вместо неоморфных пар теней. */
+  --elev-1: 0 1px 2px rgba(19, 26, 40, 0.05), 0 1px 3px rgba(19, 26, 40, 0.04);
+  --elev-2: 0 1px 2px rgba(19, 26, 40, 0.05), 0 4px 14px -4px rgba(19, 26, 40, 0.10);
+  --elev-3: 0 8px 32px -8px rgba(19, 26, 40, 0.20);
+  --inset: inset 0 1px 2px rgba(19, 26, 40, 0.06);
+  --ring: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
+/* Тёмная тема: холодный сине-серый, а не бурый. Прошлый вариант выглядел
+   «смуглым» из-за тёплой подложки #262b36 и пыльно-розового акцента — фон
+   уведён в синеву, акцент очищен, границы стали различимыми. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #262b36;
-    --surface: #262b36;
-    --surface-2: #2c3240;
-    --ink: #e7e9f0;
-    --muted: #a2a9ba;
-    --faint: #747c8f;
-    --line: #333a48;
-    --accent: #e0919c;
-    --accent-strong: #eaa7b0;
-    --accent-soft: #3d2a2f;
-    --on-accent: #262b36;
-    --positive: #7fbe9c;
-    --positive-soft: #24352d;
-    --warning: #e0b565;
-    --warning-soft: #3a301c;
-    --negative: #e0919c;
-    --negative-soft: #3d2a2f;
+    --bg: #0d1118;
+    --surface: #151a23;
+    --surface-2: #1b212c;
+    --ink: #e9edf4;
+    --muted: #9aa4b6;
+    --faint: #6c7688;
+    --line: #262d3a;
+    --line-strong: #333c4c;
 
-    --good: #8fbecb;
-    --good-soft: #24343a;
+    --accent: #f0718a;
+    --accent-strong: #ff8ba0;
+    --accent-soft: #2e1a20;
+    --on-accent: #14181f;
 
-    --accent-lift: #a8626f;
-    --positive-lift: #4e8b71;
-    --good-lift: #628f9c;
-    --warning-lift: #a5834a;
-    --negative-lift: #a8626f;
+    --positive: #5cc191;
+    --positive-soft: #14291f;
+    --good: #58b2cc;
+    --good-soft: #12262d;
+    --warning: #e2b568;
+    --warning-soft: #2c2415;
+    --negative: #f0718a;
+    --negative-soft: #2e1a20;
 
-    --shadow-light: #323847;
-    --shadow-dark: #1a1e26;
+    --accent-lift: #b8556a;
+    --positive-lift: #429269;
+    --good-lift: #3f849a;
+    --warning-lift: #a9854a;
+    --negative-lift: #b8556a;
+
+    --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --elev-2: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px -4px rgba(0, 0, 0, 0.5);
+    --elev-3: 0 10px 36px -10px rgba(0, 0, 0, 0.7);
+    --inset: inset 0 1px 2px rgba(0, 0, 0, 0.35);
   }
 }
 :root[data-theme='dark'] {
-  --bg: #262b36;
-  --surface: #262b36;
-  --surface-2: #2c3240;
-  --ink: #e7e9f0;
-  --muted: #a2a9ba;
-  --faint: #747c8f;
-  --line: #333a48;
-  --accent: #e0919c;
-  --accent-strong: #eaa7b0;
-  --accent-soft: #3d2a2f;
-  --on-accent: #262b36;
-  --positive: #7fbe9c;
-  --positive-soft: #24352d;
-  --warning: #e0b565;
-  --warning-soft: #3a301c;
-  --negative: #e0919c;
-  --negative-soft: #3d2a2f;
+  --bg: #0d1118;
+  --surface: #151a23;
+  --surface-2: #1b212c;
+  --ink: #e9edf4;
+  --muted: #9aa4b6;
+  --faint: #6c7688;
+  --line: #262d3a;
+  --line-strong: #333c4c;
 
-  --good: #8fbecb;
-  --good-soft: #24343a;
+  --accent: #f0718a;
+  --accent-strong: #ff8ba0;
+  --accent-soft: #2e1a20;
+  --on-accent: #14181f;
 
-  --accent-lift: #a8626f;
-  --positive-lift: #4e8b71;
-  --good-lift: #628f9c;
-  --warning-lift: #a5834a;
-  --negative-lift: #a8626f;
+  --positive: #5cc191;
+  --positive-soft: #14291f;
+  --good: #58b2cc;
+  --good-soft: #12262d;
+  --warning: #e2b568;
+  --warning-soft: #2c2415;
+  --negative: #f0718a;
+  --negative-soft: #2e1a20;
 
-  --shadow-light: #323847;
-  --shadow-dark: #1a1e26;
+  --accent-lift: #b8556a;
+  --positive-lift: #429269;
+  --good-lift: #3f849a;
+  --warning-lift: #a9854a;
+  --negative-lift: #b8556a;
+
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --elev-2: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px -4px rgba(0, 0, 0, 0.5);
+  --elev-3: 0 10px 36px -10px rgba(0, 0, 0, 0.7);
+  --inset: inset 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 * { box-sizing: border-box; }
@@ -124,7 +136,8 @@ body {
 }
 h1, h2, h3, h4 {
   font-family: 'Manrope', 'Inter', sans-serif;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.015em;
   margin: 0;
   text-wrap: balance;
 }
@@ -141,7 +154,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .chart-dot, .radial-fill, tbody tr, .welcome-feature {
     transition: box-shadow .18s ease, color .18s ease, transform .18s cubic-bezier(.16,1,.3,1), background .18s ease, border-color .18s ease;
   }
-  .card:hover { transform: translateY(-2px); }
+  .card:hover { transform: translateY(-2px); box-shadow: var(--elev-3); }
   .btn:hover { transform: translateY(-1px); }
   .btn:active { transform: translateY(0); }
 
@@ -172,6 +185,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .app-shell { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
 
 .app-sidebar {
+  position: relative;
   background: var(--surface);
   padding: 26px 18px;
   display: flex;
@@ -181,19 +195,19 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   top: 0;
   height: 100vh;
   overflow-y: auto;
-  box-shadow: 8px 0 20px -14px var(--shadow-dark);
+  border-right: 1px solid var(--line);
 }
 
 /* Шапка с бургером — только на узких экранах; на десктопе её место занимает
    постоянный сайдбар. */
 .app-topbar { display: none; }
 .burger {
-  border: none; background: var(--surface); box-shadow: var(--nm-raised-sm);
+  border: 1px solid var(--line-strong); background: var(--surface); box-shadow: var(--elev-1);
   border-radius: 11px; width: 42px; height: 42px; flex-shrink: 0; cursor: pointer;
   display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
 }
 .burger span { display: block; width: 17px; height: 2px; border-radius: 2px; background: var(--ink); }
-.burger:active { box-shadow: var(--nm-pressed-sm); }
+.burger:active { box-shadow: var(--inset); }
 .topbar-title {
   flex: 1; min-width: 0; font-family: 'Manrope', 'Inter', sans-serif; font-weight: 700;
   font-size: 1.02rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -220,28 +234,60 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 
 .brand { display: flex; flex-direction: column; gap: 2px; padding: 4px 10px 14px; }
+
+/* ---------- свёрнутый сайдбар ---------- */
+.app-shell:has(.app-sidebar.collapsed) { grid-template-columns: 76px 1fr; }
+.rail-toggle {
+  position: absolute; top: 22px; right: -11px; z-index: 5;
+  width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--line-strong); background: var(--surface); color: var(--muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; line-height: 1; box-shadow: var(--elev-1);
+}
+.rail-toggle:hover { color: var(--accent-strong); border-color: var(--accent); }
+
+.app-sidebar.collapsed { padding: 26px 12px; align-items: center; }
+.app-sidebar.collapsed .brand { align-items: center; padding: 4px 0 14px; }
+.app-sidebar.collapsed .brand .mark { font-size: 1.35rem; }
+.app-sidebar.collapsed .nav-list { width: 100%; }
+.app-sidebar.collapsed .nav-link { justify-content: center; padding: 11px 0; gap: 0; }
+/* Подпись убираем визуально, но оставляем для скринридеров. */
+.app-sidebar.collapsed .nav-text,
+.app-sidebar.collapsed .current-user-text,
+.app-sidebar.collapsed .logout-text {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+.app-sidebar.collapsed .nav-icon { width: auto; font-size: 1.02rem; }
+.app-sidebar.collapsed .current-user { justify-content: center; padding: 10px 0 12px; }
+.app-sidebar.collapsed .logout-btn { padding: 9px 0; justify-content: center; }
+.logout-icon { display: none; line-height: 0; }
+.app-sidebar.collapsed .logout-icon { display: inline-flex; }
+@media (prefers-reduced-motion: no-preference) {
+  .app-sidebar { transition: padding .22s cubic-bezier(.16,1,.3,1); }
+}
 .brand .mark { font-family: 'Manrope', 'Inter', sans-serif; font-weight: 700; font-size: 1.3rem; }
 .brand .role-tag,
 .role-tag { font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--faint); }
 
-.lang-switch { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; box-shadow: var(--nm-pressed-sm); }
+.lang-switch { display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); }
 .lang-pill {
   position: relative; border: none; background: transparent; cursor: pointer; color: var(--muted);
   font-size: 0.68rem; font-weight: 700; letter-spacing: 0.03em; padding: 5px 10px; border-radius: 999px;
 }
 .lang-pill-bg {
   position: absolute; inset: 0; border-radius: 999px; z-index: 0;
-  background: var(--surface); box-shadow: var(--nm-raised-sm);
+  background: var(--surface); box-shadow: var(--elev-1); border: 1px solid var(--line);
 }
 .lang-pill-text { position: relative; z-index: 1; }
 .lang-pill.active { color: var(--accent-strong); }
 
 /* `subtle` — язык меняют один раз, поэтому по умолчанию переключатель почти не
    виден и проявляется при наведении или фокусе с клавиатуры. */
-.lang-switch.subtle { box-shadow: none; opacity: 0.55; }
+.lang-switch.subtle { background: transparent; border-color: transparent; opacity: 0.6; }
 .lang-switch.subtle:hover, .lang-switch.subtle:focus-within { opacity: 1; }
 .lang-switch.subtle .lang-pill { font-size: 0.63rem; padding: 4px 8px; }
-.lang-switch.subtle .lang-pill-bg { background: var(--surface-2); box-shadow: var(--nm-pressed-sm); }
+.lang-switch.subtle .lang-pill-bg { background: var(--surface); box-shadow: var(--elev-1); }
 @media (prefers-reduced-motion: no-preference) { .lang-switch.subtle { transition: opacity .2s ease; } }
 
 .nav-list { display: flex; flex-direction: column; }
@@ -253,7 +299,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 .nav-active-bg {
   position: absolute; inset: 0; border-radius: var(--radius-sm); z-index: 0;
-  background: var(--surface); box-shadow: var(--nm-pressed-sm);
+  background: var(--accent-soft);
 }
 .nav-icon, .nav-text { position: relative; z-index: 1; }
 .nav-icon { width: 18px; text-align: center; font-size: 0.9rem; opacity: 0.75; }
@@ -274,7 +320,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .avatar {
   flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--surface); box-shadow: var(--nm-raised-sm);
+  background: var(--accent-soft); border: 1px solid var(--line);
   font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em; color: var(--accent-strong);
 }
 
@@ -295,8 +341,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 .card {
   background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: var(--nm-raised);
+  box-shadow: var(--elev-2);
   padding: 20px 22px;
 }
 .card h3 { font-size: 1rem; margin-bottom: 10px; }
@@ -320,13 +367,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .meter-value.negative { color: var(--negative); }
 
 .progress-bar {
-  position: relative; height: 12px; border-radius: 999px;
-  box-shadow: var(--nm-pressed-sm); background: var(--surface-2);
+  position: relative; height: 10px; border-radius: 999px;
+  background: var(--surface-2); border: 1px solid var(--line);
 }
 .progress-fill {
   position: absolute; inset: 0 auto 0 0; display: block; height: 100%;
   border-radius: 999px; overflow: hidden;
-  box-shadow: 0 1px 6px -1px var(--shadow-dark);
 }
 /* A highlight travels the length of the fill once it has settled, so a filled
    meter still reads as "live" without the bar itself ever moving again. */
@@ -355,12 +401,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .badge.accent { background: var(--accent-soft); color: var(--accent); }
 .badge.negative { background: var(--negative-soft); color: var(--negative); }
 .badge.warning { background: var(--warning-soft); color: var(--warning); }
-.badge.neutral { background: var(--surface-2); color: var(--muted); box-shadow: var(--nm-pressed-sm); }
+.badge.neutral { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
 
-.table-wrap { overflow-x: auto; border-radius: var(--radius); background: var(--surface); box-shadow: var(--nm-raised); padding: 4px; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--elev-2); }
 table { border-collapse: collapse; width: 100%; min-width: 480px; font-size: 0.88rem; }
 thead th {
-  text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
+  text-align: left; border-bottom: 1px solid var(--line); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--faint); padding: 12px 16px 10px; white-space: nowrap; position: sticky; top: 0; background: var(--surface);
 }
 tbody td { padding: 9px 16px; border-top: 1px solid var(--line); vertical-align: middle; }
@@ -371,21 +417,25 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .btn {
   display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
   border-radius: var(--radius-sm); padding: 9px 16px; font-size: 0.86rem; font-weight: 600;
-  border: none; background: var(--surface); color: var(--ink);
-  box-shadow: var(--nm-raised-sm);
+  border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
+  box-shadow: var(--elev-1);
 }
-.btn:hover { color: var(--accent-strong); }
-.btn:active { box-shadow: var(--nm-pressed-sm); }
-.btn.btn-selected { color: var(--accent-strong); box-shadow: var(--nm-pressed-sm); }
-.btn.primary { background: var(--accent); color: var(--on-accent); box-shadow: 5px 5px 12px var(--shadow-dark); }
+.btn:hover { color: var(--accent-strong); border-color: var(--accent); }
+.btn:active { box-shadow: var(--inset); }
+.btn.btn-selected { color: var(--accent-strong); border-color: var(--accent); background: var(--accent-soft); }
+.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); box-shadow: var(--elev-1); }
 .btn.primary:hover { background: var(--accent-strong); color: var(--on-accent); }
 .btn.primary:active { box-shadow: inset 3px 3px 7px rgba(0,0,0,0.25); }
-.btn.ghost { box-shadow: none; background: transparent; }
-.btn.ghost:hover { box-shadow: var(--nm-raised-sm); }
+.btn.ghost { box-shadow: none; background: transparent; border-color: transparent; }
+.btn.ghost:hover { border-color: var(--line-strong); background: var(--surface-2); }
 
 .input, select.input, textarea.input {
-  border: none; border-radius: var(--radius-sm); padding: 9px 12px; background: var(--surface); color: var(--ink);
-  width: 100%; box-shadow: var(--nm-pressed-sm); font-family: inherit; resize: vertical;
+  border: 1px solid var(--line-strong); border-radius: var(--radius-sm); padding: 9px 12px;
+  background: var(--surface-2); color: var(--ink);
+  width: 100%; box-shadow: var(--inset); font-family: inherit; resize: vertical;
+}
+.input:focus, select.input:focus, textarea.input:focus {
+  outline: none; border-color: var(--accent); background: var(--surface); box-shadow: var(--ring);
 }
 .score-input { width: 68px; text-align: center; font-variant-numeric: tabular-nums; }
 
@@ -399,7 +449,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   min-height: 100vh; display: grid; grid-template-columns: minmax(0, 46%) 1fr; background: var(--bg);
 }
 .auth-brand {
-  background: var(--surface-2); box-shadow: var(--nm-pressed-sm);
+  background: var(--surface-2); box-shadow: var(--inset);
   padding: 48px 5vw; display: flex; align-items: center; justify-content: flex-end;
   background-image: radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 60%);
 }
@@ -419,6 +469,9 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 .input-wrap { position: relative; display: block; }
 .input-wrap .input { padding-right: 46px; }
+/* У Edge есть встроенная кнопка показа пароля — рядом с нашей получалось два
+   одинаковых значка. */
+.input::-ms-reveal, .input::-ms-clear { display: none; }
 .reveal-btn {
   position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
   border: none; background: transparent; cursor: pointer; color: var(--faint);
@@ -451,7 +504,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .gauge { display: inline-flex; flex-direction: column; align-items: center; flex-shrink: 0; }
 .gauge-ring { position: relative; display: inline-flex; align-items: center; justify-content: center; }
 .gauge svg { overflow: visible; }
-.gauge-track { fill: none; stroke: var(--surface-2); filter: drop-shadow(inset 0 0 0 transparent); }
+.gauge-track { fill: none; stroke: var(--line); }
 .gauge-fill { fill: none; }
 .gauge-marker { stroke: var(--surface); stroke-width: 3; }
 .gauge-tick { stroke: var(--line); stroke-width: 2; stroke-linecap: round; }
@@ -489,8 +542,8 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* ---------- radial (compact ring) ---------- */
 .radial { position: relative; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.radial svg { filter: drop-shadow(2px 2px 5px var(--shadow-dark)) drop-shadow(-2px -2px 5px var(--shadow-light)); }
-.radial-track { fill: none; stroke: var(--surface-2); }
+.radial svg { display: block; }
+.radial-track { fill: none; stroke: var(--line); }
 .radial-fill { fill: none; }
 .radial-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
 .radial-value { font-family: 'Manrope', 'Inter', sans-serif; font-weight: 600; color: var(--ink); line-height: 1; }
@@ -506,7 +559,6 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
    gauge's glow filter, which draws outside the SVG box. */
 .hero-card {
   position: relative;
-  background-image: radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 55%);
 }
 .hero-meta { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 14px; }
 .hero-meta .item { display: flex; flex-direction: column; gap: 1px; }
@@ -525,7 +577,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* ---------- welcome / landing page ---------- */
 .welcome-shell { min-height: 100vh; background: var(--bg); }
-.welcome-hero, .welcome-features, .welcome-final {
+.welcome-hero, .welcome-features {
   max-width: 1100px; margin: 0 auto; padding-left: 24px; padding-right: 24px;
 }
 
@@ -535,6 +587,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   max-width: 1100px; margin: 0 auto; padding: 16px 24px;
   background: color-mix(in srgb, var(--bg) 92%, transparent);
   backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
 }
 .welcome-nav-brand { font-family: 'Manrope', 'Inter', sans-serif; font-weight: 700; font-size: 1.15rem; }
 .welcome-nav-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -548,7 +601,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .welcome-hero-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
 .welcome-badge {
   display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px;
-  background: var(--surface); box-shadow: var(--nm-raised-sm); font-size: 0.72rem; font-weight: 700;
+  background: var(--surface); box-shadow: var(--elev-1); font-size: 0.72rem; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-strong);
 }
 .welcome-hero h1 { font-size: clamp(1.9rem, 4.4vw, 3rem); max-width: 18ch; line-height: 1.12; }
@@ -567,28 +620,22 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* Keep the sticky header from covering a section the reader jumped to via #how. */
 
-.welcome-features { padding-bottom: 56px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.welcome-features { padding-bottom: 64px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 @media (max-width: 860px) { .welcome-features { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .welcome-features { grid-template-columns: 1fr; } }
 .welcome-feature {
-  height: 100%; background: var(--surface); border-radius: var(--radius); box-shadow: var(--nm-raised);
+  height: 100%; background: var(--surface); border-radius: var(--radius); box-shadow: var(--elev-2);
   padding: 22px 20px; display: flex; flex-direction: column; gap: 8px;
 }
 .welcome-feature .icon {
   width: 42px; height: 42px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;
-  background: var(--surface); box-shadow: var(--nm-pressed-sm); font-size: 1.2rem;
+  background: var(--surface); box-shadow: var(--inset); font-size: 1.2rem;
 }
 .welcome-feature h3 { font-size: 0.98rem; }
 .welcome-feature p { margin: 0; color: var(--muted); font-size: 0.86rem; }
 
 
 
-.welcome-final {
-  text-align: center; padding-top: 46px; padding-bottom: 56px;
-  display: flex; flex-direction: column; align-items: center; gap: 14px;
-}
-.welcome-final h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); }
-.welcome-final p { margin: 0; color: var(--muted); max-width: 52ch; }
 
 .welcome-footer { text-align: center; padding: 0 24px 48px; color: var(--faint); font-size: 0.8rem; }
 
@@ -614,6 +661,88 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .kv-labelled dd { margin-bottom: 6px; }
 }
 
+/* ---------- реакция формы входа ---------- */
+.auth-progress {
+  height: 3px; border-radius: 999px; background: var(--line); overflow: hidden; margin: 2px 0 4px;
+}
+.auth-progress-fill {
+  display: block; height: 100%; width: 0; border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent-lift), var(--accent));
+}
+.auth-submit { position: relative; }
+.submit-spark { font-size: 0.95rem; line-height: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .auth-submit.ready { box-shadow: var(--elev-2), 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .auth-submit { transition: box-shadow .3s ease; }
+}
+
+/* ---------- фоновое движение ---------- */
+.ambient { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.ambient .blob {
+  position: absolute; display: block; border-radius: 50%;
+  filter: blur(90px); opacity: 0.11;
+}
+.blob-a { width: 42vw; height: 42vw; left: -8vw; top: -10vw; background: var(--accent); }
+.blob-b { width: 34vw; height: 34vw; right: -6vw; top: 18vh; background: var(--good); }
+.blob-c { width: 30vw; height: 30vw; left: 26vw; bottom: -12vw; background: var(--positive); }
+:root[data-theme='dark'] .ambient .blob { opacity: 0.10; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .ambient .blob { opacity: 0.10; } }
+
+/* Тонкая сетка поверх пятен — она даёт «инженерный», а не декоративный вид. */
+.ambient-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 4%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 40%, transparent 100%);
+}
+/* Содержимое страниц лежит выше фонового слоя. Сам слой исключён: иначе
+   position: relative отменяет ему fixed, и он встаёт в поток как ячейка грида,
+   разваливая разметку страницы. */
+.auth > *:not(.ambient),
+.welcome-shell > *:not(.ambient) { position: relative; z-index: 1; }
+
+/* ---------- микроанимации кнопок ---------- */
+/* У каждого типа действия своя реакция, чтобы нажатие ощущалось по-разному:
+   основная кнопка даёт волну от места клика, обычная — подъём и подсветку
+   границы, ghost — мягкую заливку. */
+.btn { position: relative; overflow: hidden; }
+.btn > * { position: relative; z-index: 1; }
+.btn.primary::after {
+  content: ''; position: absolute; inset: 0; z-index: 0; border-radius: inherit;
+  background: radial-gradient(circle at var(--px, 50%) var(--py, 50%), rgba(255,255,255,0.42), transparent 60%);
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn.primary::after { transition: opacity .45s ease; }
+  .btn.primary:hover::after { opacity: 1; }
+  .btn.primary:active::after { opacity: 0.7; transition-duration: .08s; }
+  .nav-link:hover .nav-icon { transform: translateX(2px); }
+  .nav-link .nav-icon { transition: transform .2s cubic-bezier(.16,1,.3,1); }
+  .rail-toggle:hover { transform: scale(1.12); }
+  .rail-toggle { transition: transform .18s cubic-bezier(.16,1,.3,1), color .18s ease, border-color .18s ease; }
+  .burger span { transition: width .2s cubic-bezier(.16,1,.3,1); }
+  .burger:hover span:nth-child(1) { width: 12px; }
+  .burger:hover span:nth-child(3) { width: 12px; }
+}
+
+/* ---------- список файлов преподавателя ---------- */
+.file-list { display: flex; flex-direction: column; gap: 8px; }
+.file-row {
+  display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;
+  padding: 10px 13px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+.file-row:hover { border-color: var(--accent); background: var(--surface); box-shadow: var(--elev-1); }
+.file-icon { font-size: 1.1rem; flex-shrink: 0; line-height: 1; }
+.file-name { flex: 1; min-width: 0; font-size: 0.88rem; font-weight: 500; overflow-wrap: anywhere; }
+.file-action { flex-shrink: 0; font-size: 0.78rem; font-weight: 600; color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) {
+  .file-row { transition: border-color .18s ease, background .18s ease, box-shadow .18s ease, transform .18s cubic-bezier(.16,1,.3,1); }
+  .file-row:hover { transform: translateX(2px); }
+}
+
 /* ---------- адаптив ---------- */
 @media (max-width: 900px) {
   .app-main { padding: 20px 16px 56px; }
@@ -621,13 +750,15 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .hero-card { flex-direction: column; align-items: flex-start; gap: 18px; padding: 22px 20px; }
   .hero-card .hero-text h1 { font-size: 1.4rem; }
   .hero-meta { gap: 16px; }
-  .welcome-nav { padding: 12px 16px; }
+  .welcome-nav { padding: 16px 16px 0; }
   .welcome-hero { gap: 28px; padding-bottom: 34px; }
-  .welcome-final { padding-top: 30px; padding-bottom: 40px; }
 }
 
 @media (max-width: 560px) {
   body { font-size: 14.5px; }
+  /* Кнопка входа остаётся одна — в герое; в шапке на узком экране она была
+     третьей подряд одинаковой кнопкой. */
+  .welcome-nav-actions .btn.primary { display: none; }
   .app-main { padding: 16px 12px 48px; }
   .card { padding: 17px 16px; }
   .page-header { margin-bottom: 18px; }

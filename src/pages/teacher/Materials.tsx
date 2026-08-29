@@ -3,6 +3,7 @@ import { useStore } from '../../data/store';
 import { useI18n } from '../../i18n';
 import { formatDate, LOCALE_BY_LANG } from '../../lib/format';
 import { useBookText } from '../../lib/label';
+import { SharedFiles } from '../../components/SharedFiles';
 
 export default function TeacherMaterials() {
   const { data, addBook } = useStore();
@@ -33,6 +34,8 @@ export default function TeacherMaterials() {
           <p className="lede">{t('teacher.materialsSub')}</p>
         </div>
       </div>
+
+      <SharedFiles />
 
       <div className="card" style={{ marginBottom: 16 }}>
         <div className="field" style={{ marginBottom: 12 }}>

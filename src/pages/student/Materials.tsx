@@ -3,6 +3,7 @@ import { useSession } from '../../lib/session';
 import { useI18n } from '../../i18n';
 import { formatDate, LOCALE_BY_LANG } from '../../lib/format';
 import { useBookText, useLabel, useTitle } from '../../lib/label';
+import { SharedFiles } from '../../components/SharedFiles';
 
 function downloadPlaceholder(title: string, body: string) {
   const blob = new Blob([`${title}\n\n${body}\n\n— demo file, will be a real PDF from Supabase Storage.`], { type: 'text/plain;charset=utf-8' });
@@ -34,6 +35,8 @@ export default function StudentMaterials() {
           <p className="lede">{t('student.materialsSub', { group: label(group) })}</p>
         </div>
       </div>
+
+      <SharedFiles />
 
       {data.months.map((month) => {
         const monthWeeks = data.weeks.filter((w) => w.monthId === month.id);

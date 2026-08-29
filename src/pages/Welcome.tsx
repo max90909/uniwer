@@ -7,6 +7,7 @@ import { ScoreGauge } from '../components/ScoreGauge';
 import { ProgressBar } from '../components/ProgressBar';
 import { Item, Stagger } from '../components/Reveal';
 import { prefersReducedMotion } from '../lib/useAnimatedNumber';
+import { AmbientBackground } from '../components/AmbientBackground';
 
 /**
  * Страница намеренно короткая: раньше здесь было шесть возможностей, четыре
@@ -40,6 +41,7 @@ export function Welcome() {
 
   return (
     <div className="welcome-shell">
+      <AmbientBackground />
       <header className="welcome-nav">
         <span className="welcome-nav-brand">{t('appName')}</span>
         <div className="welcome-nav-actions">
@@ -89,17 +91,6 @@ export function Welcome() {
           </Item>
         ))}
       </Stagger>
-
-      <motion.section
-        className="welcome-final"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <h2>{t('welcome.finalTitle')}</h2>
-        <Link to="/login" className="btn primary lg">{t('welcome.cta')}</Link>
-      </motion.section>
 
       <p className="welcome-footer">{t('welcome.footer')}</p>
     </div>
