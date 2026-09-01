@@ -115,8 +115,14 @@ export function Layout({ role }: { role: 'student' | 'teacher' | 'admin' }) {
   const renderSidebar = (compact: boolean) => (
     <>
       <div className="brand">
-        <span className="mark">{compact ? t('appName').slice(0, 1) : t('appName')}</span>
-        {!compact && <span className="role-tag">{t(`role.${role}`)}</span>}
+        {/* Название разбито на первую букву и остаток: при сворачивании остаток
+            съезжает в ноль ширины, и слово плавно ужимается до «В» вместо того,
+            чтобы подмениться скачком. */}
+        <span className="mark">
+          <span className="mark-initial">{t('appName').slice(0, 1)}</span>
+          <span className="mark-rest">{t('appName').slice(1)}</span>
+        </span>
+        <span className="role-tag">{t(`role.${role}`)}</span>
       </div>
 
       <div className="nav-list">

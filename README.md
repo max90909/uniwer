@@ -116,5 +116,5 @@ SITE_BASE=имя-репозитория npm run build:site
 | Роль | Логин | Пароль |
 | --- | --- | --- |
 | Ученик | `student` | `student123` |
-| Преподаватель | `teacher` | `teacher123` |
-| Администратор | `admin` | `admin123` |
+| Преподаватель (Tleuov Parahat) | `tleuov` | `Parahat#7412` |
+| Администратор | `admin` | `Vedomost#9350` |

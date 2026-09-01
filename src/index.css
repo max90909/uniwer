@@ -182,6 +182,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 /* ---------- app shell ---------- */
 .app-shell { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+/* Ширина колонки анимируется: без этого сайдбар менял размер скачком, а вся
+   рабочая область прыгала под ним. */
+@media (prefers-reduced-motion: no-preference) {
+  .app-shell { transition: grid-template-columns .34s cubic-bezier(.16, 1, .3, 1); }
+}
 
 .app-sidebar {
   position: sticky;
@@ -257,15 +262,29 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 .app-sidebar.collapsed { padding: 26px 12px; align-items: center; }
 .app-sidebar.collapsed .brand { align-items: center; padding: 4px 0 14px; }
+.brand .mark { display: inline-flex; }
 .app-sidebar.collapsed .brand .mark { font-size: 1.35rem; }
+.app-sidebar.collapsed .current-user-text { flex: 0 0 auto; }
 .app-sidebar.collapsed .nav-list { width: 100%; }
 .app-sidebar.collapsed .nav-link { justify-content: center; padding: 11px 0; gap: 0; }
 /* Подпись убираем визуально, но оставляем для скринридеров. */
+/* Подписи ужимаются по ширине, а не выдёргиваются из потока: max-width можно
+   анимировать, а clip у sr-only — нет. Текст остаётся в разметке, и его
+   по-прежнему читает скринридер. */
+.nav-text, .logout-text, .current-user-text, .mark-rest, .brand .role-tag {
+  max-width: 200px; overflow: hidden; white-space: nowrap;
+}
 .app-sidebar.collapsed .nav-text,
 .app-sidebar.collapsed .current-user-text,
-.app-sidebar.collapsed .logout-text {
-  position: absolute; width: 1px; height: 1px; overflow: hidden;
-  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+.app-sidebar.collapsed .logout-text,
+.app-sidebar.collapsed .mark-rest,
+.app-sidebar.collapsed .role-tag {
+  max-width: 0; opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nav-text, .logout-text, .current-user-text, .mark-rest, .brand .role-tag {
+    transition: max-width .34s cubic-bezier(.16, 1, .3, 1), opacity .2s ease;
+  }
 }
 .app-sidebar.collapsed .nav-icon { width: auto; font-size: 1.02rem; }
 .app-sidebar.collapsed .current-user { justify-content: center; padding: 10px 0 12px; }
@@ -273,7 +292,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .logout-icon { display: none; line-height: 0; }
 .app-sidebar.collapsed .logout-icon { display: inline-flex; }
 @media (prefers-reduced-motion: no-preference) {
-  .app-sidebar { transition: padding .22s cubic-bezier(.16,1,.3,1); }
+  .app-sidebar { transition: padding .34s cubic-bezier(.16,1,.3,1); }
 }
 .brand .mark { font-family: 'Manrope', 'Inter', sans-serif; font-weight: 700; font-size: 1.3rem; }
 .brand .role-tag,

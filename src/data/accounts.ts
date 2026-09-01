@@ -23,8 +23,8 @@ export interface Account {
 
 export const ACCOUNTS: Account[] = [
   { login: 'student', password: 'student123', userId: 'user-student-1', role: 'student' },
-  { login: 'teacher', password: 'teacher123', userId: 'user-teacher-1', role: 'teacher' },
-  { login: 'admin', password: 'admin123', userId: 'user-admin-1', role: 'admin' },
+  { login: 'tleuov', password: 'Parahat#7412', userId: 'user-teacher-1', role: 'teacher' },
+  { login: 'admin', password: 'Vedomost#9350', userId: 'user-admin-1', role: 'admin' },
 ];
 
 /** Возвращает id пользователя или null, если пары логин/пароль нет. */

@@ -1,4 +1,4 @@
-// Генератор демонстрационных данных: 3 группы по 25 учеников, курс на 9 месяцев.
+// Генератор демонстрационных данных: 20 групп (3321…3340) по 25 учеников, курс на 9 месяцев.
 // Детерминированный генератор (без Math.random) — при каждой пересборке даёт одни и те же данные,
 // пока пользователь не начнёт редактировать их через интерфейс (тогда изменения живут в localStorage, см. store.ts).
 // Когда реальные ученики заменят демо-данные, этот файл просто перестаёт использоваться —
@@ -65,22 +65,18 @@ export const topics: Topic[] = [
   { id: 'topic-speaking', courseId: course.id, name: 'Разговорная практика', nameKey: 'topic.speaking' },
 ];
 
-const GROUP_DEFS = [
-  { id: 'group-a', name: 'Группа A' },
-  { id: 'group-b', name: 'Группа B' },
-  { id: 'group-c', name: 'Группа C' },
-];
+// Группы курса — номера 3321…3340, как в учебном расписании.
+const GROUP_CODES = Array.from({ length: 20 }, (_, i) => String(3321 + i));
+const GROUP_DEFS = GROUP_CODES.map((code) => ({ id: `group-${code}`, code }));
 
-// Буква группы подставляется в перевод, поэтому «Группа A» / «Group A» / «A topary»
-// собираются на лету, а не хранятся строкой.
+// Номер подставляется в перевод, поэтому «Группа 3321» / «Group 3321» /
+// «3321 topary» собираются на лету, а не хранятся готовой строкой.
 export const groups: Group[] = GROUP_DEFS.map((g) => ({
   id: g.id,
   courseId: course.id,
-  name: g.name,
+  name: g.code,
   nameKey: 'group.named',
-  // Берём последнее слово: буква группы — не цифра, поэтому «убрать всё
-  // нецифровое» стирало бы и её саму.
-  nameVars: { letter: g.name.split(' ').pop() ?? g.name },
+  nameVars: { letter: g.code },
 }));
 
 // ---------- пользователи ----------
@@ -92,7 +88,8 @@ export const admin: UserRecord = {
   isActive: true,
 };
 
-const TEACHER_NAMES = ['Алия Нурланова', 'Сергей Петров', 'Дмитрий Ким'];
+// Курс ведёт один преподаватель — он же владеет всеми группами потока.
+const TEACHER_NAMES = ['Tleuov Parahat'];
 export const teacherUsers: UserRecord[] = TEACHER_NAMES.map((name, i) => ({
   id: `user-teacher-${i + 1}`,
   email: `teacher${i + 1}@vedomost.demo`,
@@ -101,12 +98,10 @@ export const teacherUsers: UserRecord[] = TEACHER_NAMES.map((name, i) => ({
   isActive: true,
 }));
 export const teachers: Teacher[] = teacherUsers.map((u) => ({ userId: u.id }));
-export const teacherGroups: TeacherGroup[] = [
-  { teacherId: teacherUsers[0].id, groupId: 'group-a' },
-  { teacherId: teacherUsers[1].id, groupId: 'group-b' },
-  { teacherId: teacherUsers[2].id, groupId: 'group-c' },
-  { teacherId: teacherUsers[0].id, groupId: 'group-b' }, // Алия ведёт две группы — демонстрирует many-to-many
-];
+export const teacherGroups: TeacherGroup[] = GROUP_DEFS.map((g) => ({
+  teacherId: teacherUsers[0].id,
+  groupId: g.id,
+}));
 
 interface StudentProfile {
   skillBase: number; // стартовый уровень 0..100

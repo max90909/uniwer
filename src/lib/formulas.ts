@@ -38,10 +38,81 @@ export interface GradeWithAssessment {
   assessment: Assessment;
 }
 
+/**
+ * Индексы по массивам оценок и тестов.
+ *
+ * Раньше `gradesForStudent` на каждый вызов строила Map всех тестов и
+ * прогоняла фильтр по всем оценкам. В рейтинге это повторяется на каждого
+ * ученика, поэтому стоимость была «ученики × оценки»: на потоке из 500 человек
+ * и ~18 000 оценок это миллионы операций на одну страницу.
+ *
+ * Ключ — сам массив: store при любой правке кладёт новый массив (`[...prev]`),
+ * поэтому изменение данных автоматически делает индекс невалидным. WeakMap не
+ * держит массивы в памяти после того, как на них не осталось ссылок.
+ */
+const gradesByStudentCache = new WeakMap<Grade[], Map<string, Grade[]>>();
+const assessmentsByIdCache = new WeakMap<Assessment[], Map<string, Assessment>>();
+
+function gradesByStudent(grades: Grade[]): Map<string, Grade[]> {
+  let index = gradesByStudentCache.get(grades);
+  if (!index) {
+    index = new Map();
+    for (const g of grades) {
+      const list = index.get(g.studentId);
+      if (list) list.push(g);
+      else index.set(g.studentId, [g]);
+    }
+    gradesByStudentCache.set(grades, index);
+  }
+  return index;
+}
+
+function assessmentsById(assessments: Assessment[]): Map<string, Assessment> {
+  let index = assessmentsByIdCache.get(assessments);
+  if (!index) {
+    index = new Map(assessments.map((a) => [a.id, a]));
+    assessmentsByIdCache.set(assessments, index);
+  }
+  return index;
+}
+
+/**
+ * Сколько оценок выставлено по каждой группе.
+ *
+ * Считалось так: для каждой оценки — линейный поиск её теста среди всех тестов,
+ * и всё это заново на каждую группу. На потоке из 20 групп выходило порядка
+ * сотен миллионов сравнений и почти две секунды блокировки потока. Теперь один
+ * проход по оценкам на весь набор данных.
+ *
+ * Кэш вложенный, потому что результат зависит и от оценок, и от тестов: если
+ * ключом взять только оценки, правка расписания оставила бы старые числа.
+ */
+const gradeCountByGroupCache = new WeakMap<Grade[], WeakMap<Assessment[], Map<string, number>>>();
+
+function gradeCountByGroup(grades: Grade[], assessments: Assessment[]): Map<string, number> {
+  let byAssessments = gradeCountByGroupCache.get(grades);
+  if (!byAssessments) {
+    byAssessments = new WeakMap();
+    gradeCountByGroupCache.set(grades, byAssessments);
+  }
+  let index = byAssessments.get(assessments);
+  if (!index) {
+    const byId = assessmentsById(assessments);
+    index = new Map();
+    for (const g of grades) {
+      const groupId = byId.get(g.assessmentId)?.groupId;
+      if (groupId) index.set(groupId, (index.get(groupId) ?? 0) + 1);
+    }
+    byAssessments.set(assessments, index);
+  }
+  return index;
+}
+
 export function gradesForStudent(studentId: string, grades: Grade[], assessments: Assessment[]): GradeWithAssessment[] {
-  const byId = new Map(assessments.map((a) => [a.id, a]));
-  return grades
-    .filter((g) => g.studentId === studentId)
+  const byId = assessmentsById(assessments);
+  const mine = gradesByStudent(grades).get(studentId);
+  if (!mine) return [];
+  return mine
     .map((grade) => ({ grade, assessment: byId.get(grade.assessmentId)! }))
     .filter((g) => g.assessment)
     .sort((a, b) => a.assessment.administeredOn.localeCompare(b.assessment.administeredOn));
@@ -215,7 +286,7 @@ export function computeGroupStats(
   const todayIso = new Date().toISOString().slice(0, 10);
   const dueAssessmentCount = assessments.filter((a) => a.groupId === group.id && a.administeredOn <= todayIso).length;
   const expectedGrades = dueAssessmentCount * groupStudents.length;
-  const actualGrades = grades.filter((g) => assessments.find((a) => a.id === g.assessmentId)?.groupId === group.id).length;
+  const actualGrades = gradeCountByGroup(grades, assessments).get(group.id) ?? 0;
 
   return {
     group,
