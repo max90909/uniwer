@@ -258,14 +258,12 @@ const ru: Dict = {
   'login.point2': 'Рейтинг в группе и потоке',
   'login.point3': 'Три языка интерфейса',
   'login.formTitle': 'Вход',
-  'login.formSub': 'Введите логин и пароль, чтобы продолжить.',
   'login.username': 'Логин',
   'login.password': 'Пароль',
   'login.submit': 'Войти',
   'login.error': 'Неверный логин или пароль.',
   'login.showPassword': 'Показать пароль',
   'login.hidePassword': 'Скрыть пароль',
-  'login.hintTitle': 'Тестовые доступы',
 
 
   'login.back': 'На главную',
@@ -528,14 +526,12 @@ const en: Dict = {
   'login.point2': 'Rank in the group and cohort',
   'login.point3': 'Three interface languages',
   'login.formTitle': 'Sign in',
-  'login.formSub': 'Enter your username and password to continue.',
   'login.username': 'Username',
   'login.password': 'Password',
   'login.submit': 'Sign in',
   'login.error': 'Wrong username or password.',
   'login.showPassword': 'Show password',
   'login.hidePassword': 'Hide password',
-  'login.hintTitle': 'Test accounts',
 
 
   'login.back': 'Back to home',
@@ -798,14 +794,12 @@ const tk: Dict = {
   'login.point2': 'Toparda we akymda reýting',
   'login.point3': 'Üç interfeýs dili',
   'login.formTitle': 'Giriş',
-  'login.formSub': 'Dowam etmek üçin loginiňizi we parolyňyzy giriziň.',
   'login.username': 'Login',
   'login.password': 'Parol',
   'login.submit': 'Gir',
   'login.error': 'Login ýa-da parol nädogry.',
   'login.showPassword': 'Paroly görkez',
   'login.hidePassword': 'Paroly gizle',
-  'login.hintTitle': 'Synag hasaplary',
 
 
   'login.back': 'Baş sahypa',

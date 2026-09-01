@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { useSession } from '../lib/session';
 import { useI18n } from '../i18n';
 import { LanguageSwitcher } from '../components/Layout';
-import { ACCOUNTS } from '../data/accounts';
 import { Item, Stagger } from '../components/Reveal';
 import { AmbientBackground } from '../components/AmbientBackground';
 
@@ -84,7 +83,6 @@ export function Login() {
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         >
           <h2>{t('login.formTitle')}</h2>
-          <p className="auth-sub">{t('login.formSub')}</p>
 
           <div className="auth-progress" aria-hidden="true">
             <motion.span
@@ -150,21 +148,6 @@ export function Login() {
           <button type="submit" className={`btn primary lg auth-submit${ready ? ' ready' : ''}`}>
             {t('login.submit')}
           </button>
-
-          <details className="auth-hint">
-            <summary>{t('login.hintTitle')}</summary>
-            <table className="auth-hint-table">
-              <tbody>
-                {ACCOUNTS.map((a) => (
-                  <tr key={a.login}>
-                    <td>{t(`role.${a.role}`)}</td>
-                    <td className="mono">{a.login}</td>
-                    <td className="mono">{a.password}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </details>
 
           <div className="auth-foot">
             <LanguageSwitcher subtle />
