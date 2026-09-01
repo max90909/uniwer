@@ -521,6 +521,25 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .auth-points { display: none; }
 }
 
+/* ---------- график ---------- */
+/* Восстановлено: этот блок был случайно съеден регуляркой при чистке мёртвых
+   стилей лендинга. Без него у SVG не находился градиент и не задавались
+   обводки, поэтому область под линией заливалась чёрным по умолчанию. */
+.chart-wrap { border-radius: var(--radius-sm); box-shadow: var(--nm-pressed); padding: 10px 6px 2px; background: var(--surface); }
+.chart-line { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.chart-area { opacity: 0.9; }
+.chart-grad-a { stop-color: var(--accent); stop-opacity: 0.32; }
+.chart-grad-b { stop-color: var(--accent); stop-opacity: 0; }
+.chart-grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 5; }
+.chart-dot { fill: var(--surface); stroke: var(--accent); stroke-width: 2.5; }
+.chart-dot.end { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.chart-dot-halo { fill: var(--accent); opacity: 0.18; }
+.chart-axis-label { fill: var(--faint); font-size: 10px; font-family: 'JetBrains Mono', monospace; }
+.chart-value-label { fill: var(--accent-strong); font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+/* Тоже пропало вместе с блоком выше: им оформлены сообщения «нет данных». */
+.empty-note { color: var(--faint); font-size: 0.86rem; padding: 20px; text-align: center; }
+
 /* ---------- gauge (primary percentage display) ---------- */
 .gauge { display: inline-flex; flex-direction: column; align-items: center; flex-shrink: 0; }
 .gauge-ring { position: relative; display: inline-flex; align-items: center; justify-content: center; }
