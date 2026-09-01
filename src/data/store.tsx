@@ -5,15 +5,26 @@
 // хук useStore() и типы из types.ts, не зная, откуда на самом деле берутся данные.
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { buildSeed, type SeedBundle } from './seed';
+import { buildSeed, SEED_VERSION, type SeedBundle } from './seed';
 import type { AttendanceStatus, BehaviorEvent, BehaviorType, Book, Grade, GradingConfig, Group, Student } from '../types';
 
 const STORAGE_KEY = 'vedomost-demo-v1';
 
+/** В снимок кладётся версия сидов, чтобы устаревшие данные не жили вечно. */
+interface StoredSnapshot {
+  version: number;
+  data: SeedBundle;
+}
+
 function loadInitial(): SeedBundle {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as SeedBundle;
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<StoredSnapshot>;
+      // Снимок старой версии (или вовсе без неё) выбрасываем: иначе правки
+      // сидов не доходят до тех, кто уже открывал стенд.
+      if (parsed?.version === SEED_VERSION && parsed.data) return parsed.data;
+    }
   } catch {
     // повреждённые данные в localStorage — просто пересоздаём демо-набор
   }
@@ -40,7 +51,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      const snapshot: StoredSnapshot = { version: SEED_VERSION, data };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
     } catch {
       // тихо игнорируем — например, приватный режим браузера без доступа к localStorage
     }

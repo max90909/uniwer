@@ -773,10 +773,16 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
    разваливая разметку страницы. */
 .auth > *:not(.rain),
 .welcome-shell > *:not(.rain),
-.app-shell > *:not(.rain) { position: relative; z-index: 1; }
+/* В оболочке приложения слои назначаются поимённо, а не через `> *`. Общее
+   правило задевало и `position: fixed`-элементы: шторка со своей подложкой
+   сбрасывались в `relative`, вставали в поток колонкой и уводили содержимое
+   страницы вниз вместо того, чтобы накрыть его. Список из `:not()` эту беду
+   лечил, но перебивал по весу правило для сайдбара ниже. */
+.app-shell > .app-topbar,
+.app-shell > .app-main { position: relative; z-index: 1; }
 /* Сайдбар выше основной колонки: кнопка сворачивания выступает за его край, и
    при равном z-index <main> накрывал её половину и забирал клик себе. */
-.app-shell > .app-sidebar { z-index: 3; }
+.app-shell > .app-sidebar { position: relative; z-index: 3; }
 
 @media (prefers-reduced-motion: reduce) { .rain { display: none; } }
 
